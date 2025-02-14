@@ -34,7 +34,7 @@
         </div>
         <h3 id="communityVigor">vigor</h3>
         <div class="rowTwoMost">
-            <LineChartDemo/>
+            <CodeContributorCountLineChart/>
             <LineChartDemo/>
         </div>
     </div>
@@ -44,6 +44,7 @@
 import BoxChartDemo from '@/components/BoxChartDemo.vue';
 import RadarChartDemo from '@/components/RadarChartDemo.vue';
 import LineChartDemo from '@/components/LineChartDemo.vue';
+import CodeContributorCountLineChart from '@/components/oldDesign/CodeContributorCountLineChart.vue';
 
 export default {
   name: 'OverViewOSS',
@@ -51,6 +52,7 @@ export default {
     BoxChartDemo,
     RadarChartDemo,
     LineChartDemo,
+    CodeContributorCountLineChart,
   },
 };
 </script>
