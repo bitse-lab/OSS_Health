@@ -158,22 +158,22 @@ public class CodeContributorCountService{
 		                .filter(entry -> entry.getValue().stream().anyMatch(date -> !date.isBefore(dateToStartTmp) && !date.isAfter(dateToCheckTmp)))
 		                .forEach(entry -> activeContributors.add(entry.getKey()));
 	            	entity.setId("2.3.1");                
-	                entity.setNumber(activeContributors.size());
+	                entity.setNumber((double)activeContributors.size());
 	                
 	                mysqlDataMapper.insertMysqlData(entity);
 	            	// 输出每月的代码贡献者
 	                entity.setId("2.3.1.1");                
-	                entity.setNumber(activeCodeCommitters);
+	                entity.setNumber((double)activeCodeCommitters);
 	                
 	                mysqlDataMapper.insertMysqlData(entity);
 	                // 输出每月的PR提交者
 	                entity.setId("2.3.1.2");                
-	                entity.setNumber(activePRSubmitters);
+	                entity.setNumber((double)activePRSubmitters);
 	                
 	                mysqlDataMapper.insertMysqlData(entity);
 	                // 输出每月的代码审核者
 	                entity.setId("2.3.1.3");                
-	                entity.setNumber(activeReviewers);
+	                entity.setNumber((double)activeReviewers);
 	                
 	                mysqlDataMapper.insertMysqlData(entity);
 	                // 更新日期，进入下个月
@@ -407,16 +407,13 @@ public class CodeContributorCountService{
 	                    String reviewedAt = review.path("submitted_at").asText();  // 获取提交审核时间
 	                    // 转换为 LocalDate
 	                    LocalDate reviewDate = LocalDate.parse(reviewedAt.substring(0, 10));
-
 	                    // 在 reviewers 中加入该审核者的信息
 	                    reviewers.computeIfAbsent(reviewer, k -> new ArrayList<>()).add(reviewDate);
 	                }
-
 	                // 增加页码，继续请求下一页评论
 	                reviewPage++;
 	            }
 	        }
-
 	        // 增加页码，继续请求下一页PR
 	        page++;
 	    }

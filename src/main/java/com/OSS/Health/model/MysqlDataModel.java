@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class MysqlDataModel {
 	private String id; // 标识列
 	private LocalDate time;  // 日期列
-    private int number;      // 数量列
+    private double number;      // 数量列
     private String s1; // 冗余字符串列
     
     public String getId() {
@@ -24,11 +24,11 @@ public class MysqlDataModel {
         this.time = time;
     }
 
-    public int getNumber() {
+    public double getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(double number) {
         this.number = number;
     }
     

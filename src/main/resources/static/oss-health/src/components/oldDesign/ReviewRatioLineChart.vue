@@ -34,7 +34,7 @@
       async fetchData() {
         try {
           // 发送请求获取数据
-          const response = await axios.get('http://localhost:8080/api/longtermcontributors')
+          const response = await axios.get('http://localhost:8080/api/reviewratio')
           console.log(response.data)
   
           // 检查返回的是否是JSON格式
@@ -64,11 +64,11 @@
             const date = new Date(item.time); // 假设 item.time 是日期字符串
             return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`; // 格式化为 YYYY-MM
           });
-          const numbers = this.chartData.map(item => item.number)
+          const numbers = this.chartData.map(item => item.number* 100)
   
           const option = {
             title: {
-              text: '长期贡献者数量'
+              text: 'ratio'
             },
             tooltip: {
               trigger: 'axis'
@@ -80,7 +80,10 @@
             },
             yAxis: {
               type: 'value',
-              name: 'Number'
+              name: 'Number',
+              axisLabel: {
+                formatter: '{value}%'  // 将数值格式化为百分比
+              }
             },
             series: [{
               data: numbers,  // Y 轴数据为 number

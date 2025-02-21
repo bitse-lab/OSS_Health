@@ -65,10 +65,10 @@
       updateChart() {
         if (this.chartInstance) {
           // 格式化时间，保留到月份
-        const times = this.chartData.total.map(item => {
-            const date = new Date(item.time); // 假设 item.time 是日期字符串
-            return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`; // 格式化为 YYYY-MM
-        });
+          const times = this.chartData.total.map(item => {
+              const date = new Date(item.time); // 假设 item.time 是日期字符串
+              return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`; // 格式化为 YYYY-MM
+          });
   
           const total = this.chartData.total.map(item => item.number)
           const codeCommitters = this.chartData.codeCommitters.map(item => item.number)
