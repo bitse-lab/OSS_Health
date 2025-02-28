@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.OSS.Health.service.community.resilience.ReviewRatioService;
+import com.OSS.Health.service.community.resilience.PRLinkedIssueService;
 
 @SpringBootTest
 public class metricsCalculateTest {
 
     @Autowired
-    private ReviewRatioService test;
+    private PRLinkedIssueService test;
 
     @Test
     public void testService() throws Exception {

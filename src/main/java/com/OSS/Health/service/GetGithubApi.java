@@ -286,7 +286,7 @@ public class GetGithubApi{
         }
         
 	    try {
-            saveToJsonFile(allPRRelatedIssues, "PRReviewData");
+            saveToJsonFile(allPRRelatedIssues, "PRRelatedIssueData");
         } catch (IOException e) {
             System.err.println("Error saving PRRelatedIssue data to file: " + e.getMessage());
             return false;

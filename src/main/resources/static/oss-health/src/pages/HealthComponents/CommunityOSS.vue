@@ -30,7 +30,7 @@
         <div class="rowTwoMost">
             <ReviewRatioLineChart/>
             <PRMergedRatioLineChart/>
-            <LineChartDemo/>
+            <PRLinkedIssueLineChart/>
         </div>
         <h3 id="communityVigor">vigor</h3>
         <div class="rowTwoMost">
@@ -47,6 +47,7 @@ import LineChartDemo from '@/components/LineChartDemo.vue';
 import CodeContributorCountLineChart from '@/components/oldDesign/CodeContributorCountLineChart.vue';
 import ReviewRatioLineChart from '@/components/oldDesign/ReviewRatioLineChart.vue';
 import PRMergedRatioLineChart from '@/components/oldDesign/PRMergedRatioLineChart.vue';
+import PRLinkedIssueLineChart from '@/components/oldDesign/PRLinkedIssueLineChart.vue';
 
 export default {
   name: 'OverViewOSS',
@@ -57,6 +58,7 @@ export default {
     CodeContributorCountLineChart,
     ReviewRatioLineChart,
     PRMergedRatioLineChart,
+    PRLinkedIssueLineChart,
   },
 };
 </script>
