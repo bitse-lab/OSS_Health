@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.OSS.Health.service.community.resilience.PRLinkedIssueService;
+import com.OSS.Health.service.market.influence.*;
 
 @SpringBootTest
 public class metricsCalculateTest {
 
     @Autowired
-    private PRLinkedIssueService test;
+    private MonthStarService test;
 
     @Test
     public void testService() throws Exception {

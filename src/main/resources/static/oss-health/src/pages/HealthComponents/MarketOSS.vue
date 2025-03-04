@@ -24,8 +24,8 @@
         </div>
         <h3 id="marketInfluence">influence</h3>
         <div class="rowTwoMost">
-            <LineChartDemo/>
-            <LineChartDemo/>
+            <MonthForkLineChart/>
+            <MonthStarLineChart/>
             <LineChartDemo/>
         </div>
     </div>
@@ -35,6 +35,8 @@
 import BoxChartDemo from '@/components/BoxChartDemo.vue';
 import RadarChartDemo from '@/components/RadarChartDemo.vue';
 import LineChartDemo from '@/components/LineChartDemo.vue';
+import MonthForkLineChart from '@/components/oldDesign/MonthForkLineChart.vue';
+import MonthStarLineChart from '@/components/oldDesign/MonthStarLineChart.vue';
 
 export default {
   name: 'OverViewOSS',
@@ -42,6 +44,8 @@ export default {
     BoxChartDemo,
     RadarChartDemo,
     LineChartDemo,
+    MonthForkLineChart,
+    MonthStarLineChart,
   },
 };
 </script>

@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class GetGithubApi{
 	private static final String GITHUB_API_URL = "https://api.github.com";
+	private static final String GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
     private static final String REPO_OWNER = "vuejs"; // 请替换为仓库的拥有者
     private static final String REPO_NAME = "core";   // 请替换为仓库名称
     private static final String REPO_PATH = "D:/Plateform/Git/repositories/core"; // 请替换为git仓库存储位置
@@ -38,6 +39,16 @@ public class GetGithubApi{
     	
     	if(!storePRReviewData()) {
     		System.out.println("PRReview get error.");
+    		return false;
+    	}
+    	
+    	if(!storeStarData()) {
+    		System.out.println("Star get error.");
+    		return false;
+    	}
+    	
+    	if(!storeForkData()) {
+    		System.out.println("Fork get error.");
     		return false;
     	}
     	
@@ -293,5 +304,130 @@ public class GetGithubApi{
         }
   	
     	return true;
+    }
+    
+    private boolean storeStarData() {
+        System.out.println("Start storeStarData.");
+        String fileName = REPO_PATH + "/" + DEAFULT_FOLDER_NAME + "/StarData.json";
+        File file = new File(fileName);
+        if (file.exists()) {
+            return true;
+        }
+
+        String token = GITHUB_TOKEN;
+
+        // GraphQL 查询模板
+        String queryTemplate = "{ \"query\": \"query { repository(owner: \\\"%s\\\", name: \\\"%s\\\") { stargazers(first: 100, after: %s) { edges { starredAt node { login } } pageInfo { endCursor hasNextPage } } } }\" }";
+
+        String endCursor = "null"; // 初始时无游标
+        boolean hasNextPage = true;
+        
+        ArrayNode allStars = objectMapper.createArrayNode();
+
+        while (hasNextPage) {
+            // 构造 GraphQL 查询
+        	String query = String.format(queryTemplate, REPO_OWNER, REPO_NAME, endCursor.equals("null") ? "null" : ("\\\"" + endCursor + "\\\""));
+
+            // 发送请求
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + token);
+            headers.set("Content-Type", "application/json");
+
+            HttpEntity<String> entity = new HttpEntity<>(query, headers);
+            ResponseEntity<String> response = restTemplate.exchange(GITHUB_GRAPHQL_URL, HttpMethod.POST, entity, String.class);
+            
+            JsonNode jsonResponse;
+            try {
+                jsonResponse = objectMapper.readTree(response.getBody());
+            } catch (IOException e) {
+                System.err.println("Error parsing the JSON response: " + e.getMessage());
+                return false;
+            }
+
+            // 解析数据
+            JsonNode edges = jsonResponse.at("/data/repository/stargazers/edges");
+            if (edges.isArray()) {
+                for (JsonNode edge : edges) {
+                    allStars.add(edge);
+                }
+            }
+
+            // 获取分页信息
+            hasNextPage = jsonResponse.at("/data/repository/stargazers/pageInfo/hasNextPage").asBoolean();
+            endCursor = jsonResponse.at("/data/repository/stargazers/pageInfo/endCursor").asText();
+        }
+
+        // 保存 JSON 文件
+        try {
+            saveToJsonFile(allStars, "StarData");
+        } catch (IOException e) {
+            System.err.println("Error saving Star data to file: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    
+    private boolean storeForkData() {
+        System.out.println("Start storeForkData.");
+        String fileName = REPO_PATH + "/" + DEAFULT_FOLDER_NAME + "/ForkData.json";
+        File file = new File(fileName);
+        if (file.exists()) {
+            return true;
+        }
+
+        String token = GITHUB_TOKEN;
+
+        // GraphQL 查询模板
+        String queryTemplate = "{ \"query\": \"query { repository(owner: \\\"%s\\\", name: \\\"%s\\\") { forks(first: 100, after: %s) { edges { node { nameWithOwner createdAt } } pageInfo { endCursor hasNextPage } } } }\" }";
+
+        String endCursor = "null"; // 初始时无游标
+        boolean hasNextPage = true;
+
+        ArrayNode allForks = objectMapper.createArrayNode();
+
+        while (hasNextPage) {
+            // 构造 GraphQL 查询
+            String query = String.format(queryTemplate, REPO_OWNER, REPO_NAME, endCursor.equals("null") ? "null" : ("\\\"" + endCursor + "\\\""));
+
+            // 发送请求
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + token);
+            headers.set("Content-Type", "application/json");
+
+            HttpEntity<String> entity = new HttpEntity<>(query, headers);
+            ResponseEntity<String> response = restTemplate.exchange(GITHUB_GRAPHQL_URL, HttpMethod.POST, entity, String.class);
+
+            JsonNode jsonResponse;
+            try {
+                jsonResponse = objectMapper.readTree(response.getBody());
+            } catch (IOException e) {
+                System.err.println("Error parsing the JSON response: " + e.getMessage());
+                return false;
+            }
+
+            // 解析 Fork 数据
+            JsonNode edges = jsonResponse.at("/data/repository/forks/edges");
+            if (edges.isArray()) {
+                for (JsonNode edge : edges) {
+                    allForks.add(edge);
+                }
+            	}
+
+            // 获取分页信息
+            hasNextPage = jsonResponse.at("/data/repository/forks/pageInfo/hasNextPage").asBoolean();
+            endCursor = jsonResponse.at("/data/repository/forks/pageInfo/endCursor").asText();
+        }
+
+        // 保存 JSON 文件
+        try {
+            saveToJsonFile(allForks, "ForkData");
+        } catch (IOException e) {
+            System.err.println("Error saving Fork data to file: " + e.getMessage());
+            return false;
+        }
+
+        return true;
     }
 }
