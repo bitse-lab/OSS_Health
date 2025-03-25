@@ -23,7 +23,7 @@
         </div>
         <hr class="blue-line">
         <h3 id="softwareQuality">quality</h3>
-        <div class="rowTwoMost">
+        <div class="row">
             <TechnicalDebtChart/>
             <BugsChart/>
             <CodeSmellsChart/>
@@ -31,7 +31,7 @@
         </div>
         <hr class="blue-line">
         <h3 id="softwareRoubstness">robustness</h3>
-        <div class="rowTwoMost">
+        <div class="row">
             <ComplexityChart/>
             <CognitiveComplexityChart/>
             <VulnerabilitiesChart/>
@@ -39,9 +39,13 @@
         </div>
         <hr class="blue-line">
         <h3 id="softwareProductivity">productivity</h3>
-        <div class="rowTwoMost">
+        <div class="row">
             <LinesChart/>
-            <NclocChart/>
+        </div>
+        <div class="rowTwoMost">
+            <MonthIssueLineChart/>
+            <MonthCommitLineChart/>
+            <MonthPRLineChart/>
         </div>
         <hr class="blue-line">
     </div>
@@ -59,7 +63,9 @@ import CognitiveComplexityChart from '@/components/oldDesign/CognitiveComplexity
 import VulnerabilitiesChart from '@/components/oldDesign/VulnerabilitiesChart.vue';
 import CommentLinesDensityChart from '@/components/oldDesign/CommentLinesDensityChart.vue';
 import LinesChart from '@/components/oldDesign/LinesChart.vue';
-import NclocChart from '@/components/oldDesign/NclocChart.vue';
+import MonthCommitLineChart from '@/components/oldDesign/MonthCommitLineChart.vue';
+import MonthIssueLineChart from '@/components/oldDesign/MonthIssueLineChart.vue';
+import MonthPRLineChart from '@/components/oldDesign/MonthPRLineChart.vue';
 
 export default {
   name: 'OverViewOSS',
@@ -75,7 +81,9 @@ export default {
     VulnerabilitiesChart,
     CommentLinesDensityChart,
     LinesChart,
-    NclocChart,
+    MonthCommitLineChart,
+    MonthIssueLineChart,
+    MonthPRLineChart,
   },
 };
 </script>
@@ -89,16 +97,26 @@ export default {
     flex: 1;
 }
 
+.row{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; /* 允许换行 */
+}
+.row > div {
+    flex: 1;  /* 每列宽度占父容器的50% */
+    box-sizing: border-box;  /* 包括padding和border在内的宽度 */
+}
+.blue-line {
+    width: 90%;
+}
+
 .rowTwoMost{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap; /* 允许换行 */
 }
 .rowTwoMost > div {
-    flex: 1;  /* 每列宽度占父容器的50% */
+    flex: 0 0 49%;  /* 每列宽度占父容器的50% */
     box-sizing: border-box;  /* 包括padding和border在内的宽度 */
-}
-.blue-line {
-    width: 90%;
 }
 </style>

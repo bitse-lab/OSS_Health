@@ -23,7 +23,7 @@
         </div>
         <h3 id="communityOrganization">organization</h3>
         <div class="rowTwoMost">
-            <LineChartDemo/>
+            <MonthOrganizationLineChart/>
             <LineChartDemo/>
         </div>
         <h3 id="communityResilience">resilience</h3>
@@ -48,6 +48,7 @@ import CodeContributorCountLineChart from '@/components/oldDesign/CodeContributo
 import ReviewRatioLineChart from '@/components/oldDesign/ReviewRatioLineChart.vue';
 import PRMergedRatioLineChart from '@/components/oldDesign/PRMergedRatioLineChart.vue';
 import PRLinkedIssueLineChart from '@/components/oldDesign/PRLinkedIssueLineChart.vue';
+import MonthOrganizationLineChart from '@/components/oldDesign/MonthOrganizationLineChart.vue';
 
 export default {
   name: 'OverViewOSS',
@@ -59,6 +60,7 @@ export default {
     ReviewRatioLineChart,
     PRMergedRatioLineChart,
     PRLinkedIssueLineChart,
+    MonthOrganizationLineChart,
   },
 };
 </script>

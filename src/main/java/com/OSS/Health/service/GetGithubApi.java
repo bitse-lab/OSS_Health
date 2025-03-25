@@ -22,7 +22,8 @@ public class GetGithubApi{
     private static final String REPO_NAME = "core";   // 请替换为仓库名称
     private static final String REPO_PATH = "D:/Plateform/Git/repositories/core"; // 请替换为git仓库存储位置
     private static final String DEAFULT_FOLDER_NAME = "Github_Api_Message"; //在对应git仓库位置下存储保存的api信息
-    private static final String GITHUB_TOKEN = "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";  // 使用你自己的GitHub Personal Access Token
+    private static final String GITHUB_TOKEN = "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";  // 使用你自己的GitHub Personal Access Token
+    private static final String GITHUB_TOKEN1 = "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"; //备用token
     private RestTemplate restTemplate= new RestTemplate();
     private ObjectMapper objectMapper= new ObjectMapper();
     
@@ -49,6 +50,11 @@ public class GetGithubApi{
     	
     	if(!storeForkData()) {
     		System.out.println("Fork get error.");
+    		return false;
+    	}
+    	
+    	if(!storeIssueData()) {
+    		System.out.println("Issue get error.");
     		return false;
     	}
     	
@@ -395,32 +401,59 @@ public class GetGithubApi{
 	    // 创建一个包含认证信息的请求实体
 	    HttpEntity<String> entity = new HttpEntity<>(headers);
 	    // 获取所有 Issue
-	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/pulls?state=all&page=%d&per_page=%d";
+	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/issues?state=all&per_page=" + perPage + "&page=%d";
 	    // 创建一个 ArrayNode 来收集所有 Issue 数据
         ArrayNode allIssues = objectMapper.createArrayNode();
+        int getedApiNum= 0;
 	    while (true) {
-	        // 请求当前页的Issue数据
-	        String url = String.format(urlTemplate, page, perPage);
-			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-			JsonNode prArray = null;
+	    	// 构建请求 URL
+	    	String url = String.format(urlTemplate, page);
+            ResponseEntity<String> response = null;
+
             try {
-                prArray = objectMapper.readTree(response.getBody());
+            	response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);                    
+                // 检查 Rate Limit
+                if(!checkRateLimit_new(response)) {
+                	ResponseEntity<String> responseTmp= response;
+                	// 切换 token
+                    token = GITHUB_TOKEN1;
+                    headers = new HttpHeaders();
+                    headers.set("Authorization", "Bearer " + token);
+                    entity = new HttpEntity<>(headers);
+
+                    // 重新请求本页
+                    response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+                    // 再次检查 rate limit, 如果也限速了，等待默认token恢复速率
+                    if(!checkRateLimit_new(response)) {
+                    	checkRateLimit(responseTmp);
+                    	continue;
+                    }
+                }
+                // 每读取 200 个, 显示一次进度
+                ++getedApiNum;
+                if(getedApiNum% 200 == 0) {
+                	System.out.println("Get api num: "+ getedApiNum);
+                }
+                
+                JsonNode issueArray = objectMapper.readTree(response.getBody());
+                if (issueArray.isEmpty()) {
+                    break;
+                }
+                for (JsonNode issue : issueArray) {
+    	            // 过滤掉 PR（Issues API 会返回 PR 和 Issue）
+    	            if (issue.get("pull_request") == null) {
+    	                allIssues.add(issue);
+    	            }
+    	        }
+                ++page;
             } catch (IOException e) {
-                System.err.println("Error parsing the JSON response: " + e.getMessage());
+                System.err.println("Error reading issue data from response: " + e.getMessage());
+                return false;
+            } catch (InterruptedException e) {
+                System.err.println("Rate limit exceeded. Retrying after sleep.");
                 return false;
             }
-
-	        // 如果当前页没有数据，跳出循环
-	        if (prArray.isEmpty()) {
-	            break;
-	        }
-
-	        // 将PR信息保存为json文件
-	        for (JsonNode pr : prArray) {
-	        	allIssues.add(pr);
-	        }
-	        // 增加页码，继续请求下一页PR
-	        page++;
 	    }
 	    
 	    try {
@@ -434,4 +467,15 @@ public class GetGithubApi{
 	    
 	    return true;
     }
+    
+    // 如果速率被限制了就切换token，返回false，需要切换；yes不用切换
+    private boolean checkRateLimit_new(ResponseEntity<String> response) throws InterruptedException {
+        // 获取剩余的请求次数
+        String remaining = response.getHeaders().getFirst("X-RateLimit-Remaining");
+
+        if (remaining != null && Integer.parseInt(remaining) <= 0) {
+            return false;
+        }
+        return true;
+    }  
 }

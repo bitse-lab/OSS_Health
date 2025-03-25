@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.stream.StreamSupport;
 
 @Service
-public class MonthPrService{
+public class MonthPRService{
 	@Autowired
     private MysqlDataMapper mysqlDataMapper;
 
@@ -54,7 +54,7 @@ public class MonthPrService{
 	
 	        // 计算第一个时间节点
 	        LocalDate startDate = firstCommitDate.with(TemporalAdjusters.firstDayOfNextMonth());
-	        // 预处理：按月份统计 commit 数量
+	        // 预处理：按月份统计 pr 数量
 	        Map<YearMonth, Integer> monthlyPRCount = getPRData();
 	        
 	        // 开始逐月写入数据库
@@ -95,7 +95,9 @@ public class MonthPrService{
 	    
 	    for (JsonNode prNode : rootNode) {
 	    	// 提取 created_at 字段
-	        String createdAtStr = prNode.get("created_at").asText();
+	    	JsonNode createdAtNode = prNode.get("created_at");
+	    	if (createdAtNode == null || createdAtNode.isNull()) continue;
+	    	String createdAtStr = createdAtNode.asText();
 
 	        // 解析为 LocalDateTime
 	        OffsetDateTime createdAt = OffsetDateTime.parse(createdAtStr);
