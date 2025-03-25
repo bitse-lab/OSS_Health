@@ -252,59 +252,7 @@ public class GetGithubApi{
             Thread.sleep(waitTime * 1000);  // 休眠，直到重置时间
             System.out.println("Rate limit refresh.");
         }
-    }
-    
-    private boolean storePRRelatedIssueData() {
-    	System.out.println("Start storePRRelatedIssueData.");
-    	
-    	String fileName = REPO_PATH + "/" + DEAFULT_FOLDER_NAME + "/PRRelatedIssueData.json";
-        File file = new File(fileName);
-        if (file.exists()) {
-            return true;
-        }
-        
-        fileName = REPO_PATH + "/" + DEAFULT_FOLDER_NAME + "/PRData.json";
-        File prDataFile= new File(fileName);
-        if (!prDataFile.exists()) {
-            return false;
-        }
-        //读取PRData
-        ArrayNode prArray;
-        try {
-            prArray = (ArrayNode) objectMapper.readTree(prDataFile);
-        } catch (IOException e) {
-            System.err.println("Error reading PR data from file: " + e.getMessage());
-            return false;
-        }
-        
-        int page = 1;
-	    int perPage = 100; // 每页100个评论
-	    String token = GITHUB_TOKEN;	    
-	    // 设置认证信息
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.set("Authorization", "Bearer " + token);  // 添加认证信息
-	    // 创建一个包含认证信息的请求实体
-	    HttpEntity<String> entity = new HttpEntity<>(headers);
-	    // 获取所有 PRReview
-	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/pulls/%d/reviews?page=%d&per_page=%d";
-	    // 创建一个 ArrayNode 来收集所有 PRRelatedIssue 数据
-	    ObjectNode allPRRelatedIssues = objectMapper.createObjectNode();
-	    // 每读取 200 个, 显示一次进度
-	    int getedApiNum=0;
-	    // 获取RelatedIssue数据并且保存到 allPRRelatedIssues 中
-        for (JsonNode pr : prArray) {
-        	
-        }
-        
-	    try {
-            saveToJsonFile(allPRRelatedIssues, "PRRelatedIssueData");
-        } catch (IOException e) {
-            System.err.println("Error saving PRRelatedIssue data to file: " + e.getMessage());
-            return false;
-        }
-  	
-    	return true;
-    }
+    }    
     
     private boolean storeStarData() {
         System.out.println("Start storeStarData.");
@@ -429,5 +377,61 @@ public class GetGithubApi{
         }
 
         return true;
+    }
+    
+    private boolean storeIssueData() {
+    	System.out.println("Start storeIssueData.");
+    	String fileName = REPO_PATH + "/" + DEAFULT_FOLDER_NAME + "/IssueData.json";
+        File file = new File(fileName);
+        if (file.exists()) {
+            return true;
+        }
+    	int page = 1;
+	    int perPage = 100; // 每页100个
+	    String token = GITHUB_TOKEN;	    
+	    // 设置认证信息
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.set("Authorization", "Bearer " + token);  // 添加认证信息
+	    // 创建一个包含认证信息的请求实体
+	    HttpEntity<String> entity = new HttpEntity<>(headers);
+	    // 获取所有 Issue
+	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/pulls?state=all&page=%d&per_page=%d";
+	    // 创建一个 ArrayNode 来收集所有 Issue 数据
+        ArrayNode allIssues = objectMapper.createArrayNode();
+	    while (true) {
+	        // 请求当前页的Issue数据
+	        String url = String.format(urlTemplate, page, perPage);
+			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+			JsonNode prArray = null;
+            try {
+                prArray = objectMapper.readTree(response.getBody());
+            } catch (IOException e) {
+                System.err.println("Error parsing the JSON response: " + e.getMessage());
+                return false;
+            }
+
+	        // 如果当前页没有数据，跳出循环
+	        if (prArray.isEmpty()) {
+	            break;
+	        }
+
+	        // 将PR信息保存为json文件
+	        for (JsonNode pr : prArray) {
+	        	allIssues.add(pr);
+	        }
+	        // 增加页码，继续请求下一页PR
+	        page++;
+	    }
+	    
+	    try {
+            saveToJsonFile(allIssues, "IssueData");
+        } catch (IOException e) {
+            System.err.println("Error saving Issue data to file: " + e.getMessage());
+            return false;
+        }
+	    
+	    System.out.println("issuePages: " + (page-1));
+	    
+	    return true;
     }
 }

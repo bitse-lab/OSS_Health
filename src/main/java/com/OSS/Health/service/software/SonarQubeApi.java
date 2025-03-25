@@ -1,4 +1,4 @@
-package com.OSS.Health.service;
+package com.OSS.Health.service.software;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
