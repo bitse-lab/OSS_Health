@@ -22,7 +22,7 @@
             </div>
         </div>
         <hr class="blue-line">
-        <h3 id="softwareQuality">quality</h3>
+        <h3 id="softwareQuality" style="color: blue;">quality</h3>
         <div class="row">
             <TechnicalDebtChart/>
             <BugsChart/>
@@ -30,7 +30,7 @@
             <DuplicatedLinesDensityChart/>
         </div>
         <hr class="blue-line">
-        <h3 id="softwareRoubstness">robustness</h3>
+        <h3 id="softwareRoubstness" style="color: blue;">robustness</h3>
         <div class="row">
             <ComplexityChart/>
             <CognitiveComplexityChart/>
@@ -38,11 +38,9 @@
             <CommentLinesDensityChart/>
         </div>
         <hr class="blue-line">
-        <h3 id="softwareProductivity">productivity</h3>
-        <div class="row">
-            <LinesChart/>
-        </div>
+        <h3 id="softwareProductivity" style="color: blue;">productivity</h3>
         <div class="rowTwoMost">
+            <MonthChangedCodesLineChart/>
             <MonthIssueLineChart/>
             <MonthCommitLineChart/>
             <MonthPRLineChart/>
@@ -62,10 +60,10 @@ import ComplexityChart from '@/components/oldDesign/ComplexityChart.vue';
 import CognitiveComplexityChart from '@/components/oldDesign/CognitiveComplexityChart.vue';
 import VulnerabilitiesChart from '@/components/oldDesign/VulnerabilitiesChart.vue';
 import CommentLinesDensityChart from '@/components/oldDesign/CommentLinesDensityChart.vue';
-import LinesChart from '@/components/oldDesign/LinesChart.vue';
 import MonthCommitLineChart from '@/components/oldDesign/MonthCommitLineChart.vue';
 import MonthIssueLineChart from '@/components/oldDesign/MonthIssueLineChart.vue';
 import MonthPRLineChart from '@/components/oldDesign/MonthPRLineChart.vue';
+import MonthChangedCodesLineChart from '@/components/oldDesign/MonthChangedCodesLineChart.vue';
 
 export default {
   name: 'OverViewOSS',
@@ -80,7 +78,7 @@ export default {
     CognitiveComplexityChart,
     VulnerabilitiesChart,
     CommentLinesDensityChart,
-    LinesChart,
+    MonthChangedCodesLineChart,
     MonthCommitLineChart,
     MonthIssueLineChart,
     MonthPRLineChart,

@@ -1,6 +1,6 @@
 <template>
     <div class="all">
-        <h2>Organization num</h2>
+        <h2>Changed Codes Num</h2>
         <!-- 按钮，点击时触发 fetchData 方法 -->
         <button @click="fetchData">加载数据</button>
         
@@ -32,7 +32,7 @@
       async fetchData() {
         try {
           // 发送请求获取数据
-          const response = await axios.get('http://localhost:8080/api/monthorganization')
+          const response = await axios.get('http://localhost:8080/api/monthchangedcodes')
           console.log(response.data)
   
           // 检查返回的是否是JSON格式

@@ -6,11 +6,12 @@
 "1.2.2" cognitivecomplexity
 "1.2.3" vulnerabilities
 "1.2.4" commentlinesdensity
-"1.3.1" lines
+"1.3.1" monthchangedcodes
 "1.3.2" monthissue
 "1.3.3" monthcommit
 "1.3.4" monthpr
-"2.1.1" monthorganization
+"2.1.1" monthorgcommits
+"2.1.2" monthorgentropy
 "2.2.1" reviewratio
 "2.2.2" prmergedratio
 "2.2.3" prlinkedissue

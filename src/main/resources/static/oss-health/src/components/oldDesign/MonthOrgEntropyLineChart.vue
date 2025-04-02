@@ -1,16 +1,16 @@
 <template>
     <div class="all">
-      <h2>Review Ratio</h2>
-      <!-- 按钮，点击时触发 fetchData 方法 -->
-      <button @click="fetchData">加载数据</button>
-      
-      <!-- 显示提示消息 -->
-      <div v-if="errorMessage" style="color: red; font-weight: bold;">
-        {{ errorMessage }}
-      </div>
-      
-      <!-- ECharts 容器 -->
-      <div ref="chart" style="width: 100%; height: 400px;"></div>
+        <h2>Organization Information Entropy</h2>
+        <!-- 按钮，点击时触发 fetchData 方法 -->
+        <button @click="fetchData">加载数据</button>
+        
+        <!-- 显示提示消息 -->
+        <div v-if="errorMessage" style="color: red; font-weight: bold;">
+            {{ errorMessage }}
+        </div>
+        
+        <!-- ECharts 容器 -->
+        <div ref="chart" style="width: 100%; height: 400px;"></div>
     </div>
   </template>
   
@@ -32,7 +32,7 @@
       async fetchData() {
         try {
           // 发送请求获取数据
-          const response = await axios.get('http://localhost:8080/api/reviewratio')
+          const response = await axios.get('http://localhost:8080/api/monthorgentropy')
           console.log(response.data)
   
           // 检查返回的是否是JSON格式
@@ -62,11 +62,11 @@
             const date = new Date(item.time); // 假设 item.time 是日期字符串
             return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`; // 格式化为 YYYY-MM
           });
-          const numbers = this.chartData.map(item => item.number* 100)
+          const numbers = this.chartData.map(item => item.number)
   
           const option = {
             title: {
-              text: 'ratio'
+              text: ''
             },
             tooltip: {
               trigger: 'axis'
@@ -79,9 +79,6 @@
             yAxis: {
               type: 'value',
               name: 'Number',
-              axisLabel: {
-                formatter: '{value}%'  // 将数值格式化为百分比
-              }
             },
             series: [{
               data: numbers,  // Y 轴数据为 number

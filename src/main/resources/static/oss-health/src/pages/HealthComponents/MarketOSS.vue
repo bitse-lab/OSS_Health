@@ -17,16 +17,15 @@
                 <p>influence</p>
             </div>
         </div>
-        <h3 id="marketCompetitiveness">competitiveness</h3>
+        <h3 id="marketCompetitiveness" style="color: blue;">competitiveness</h3>
         <div class="rowTwoMost">
             <LineChartDemo/>
             <LineChartDemo/>
         </div>
-        <h3 id="marketInfluence">influence</h3>
+        <h3 id="marketInfluence" style="color: blue;">influence</h3>
         <div class="rowTwoMost">
             <MonthForkLineChart/>
             <MonthStarLineChart/>
-            <LineChartDemo/>
         </div>
     </div>
 </template>
@@ -54,6 +53,7 @@ export default {
 .chartRow{
     display: flex;
     flex-direction: row;
+    gap: 16px;
 }
 .chartRow > div {
     flex: 1;
@@ -63,6 +63,7 @@ export default {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap; /* 允许换行 */
+    gap: 10px; /* 添加间距 */
 }
 .rowTwoMost > div {
     flex: 0 0 49%;  /* 每列宽度占父容器的50% */

@@ -23,8 +23,8 @@
         </div>
         <h3 id="communityOrganization">organization</h3>
         <div class="rowTwoMost">
-            <MonthOrganizationLineChart/>
-            <LineChartDemo/>
+            <MonthOrgCommitsLineChart/>
+            <MonthOrgEntropyLineChart/>
         </div>
         <h3 id="communityResilience">resilience</h3>
         <div class="rowTwoMost">
@@ -35,7 +35,6 @@
         <h3 id="communityVigor">vigor</h3>
         <div class="rowTwoMost">
             <CodeContributorCountLineChart/>
-            <LineChartDemo/>
         </div>
     </div>
 </template>
@@ -43,24 +42,24 @@
 <script>
 import BoxChartDemo from '@/components/BoxChartDemo.vue';
 import RadarChartDemo from '@/components/RadarChartDemo.vue';
-import LineChartDemo from '@/components/LineChartDemo.vue';
 import CodeContributorCountLineChart from '@/components/oldDesign/CodeContributorCountLineChart.vue';
 import ReviewRatioLineChart from '@/components/oldDesign/ReviewRatioLineChart.vue';
 import PRMergedRatioLineChart from '@/components/oldDesign/PRMergedRatioLineChart.vue';
 import PRLinkedIssueLineChart from '@/components/oldDesign/PRLinkedIssueLineChart.vue';
-import MonthOrganizationLineChart from '@/components/oldDesign/MonthOrganizationLineChart.vue';
+import MonthOrgCommitsLineChart from '@/components/oldDesign/MonthOrgCommitsLineChart.vue';
+import MonthOrgEntropyLineChart from '@/components/oldDesign/MonthOrgEntropyLineChart.vue';
 
 export default {
   name: 'OverViewOSS',
   components: {
     BoxChartDemo,
     RadarChartDemo,
-    LineChartDemo,
     CodeContributorCountLineChart,
     ReviewRatioLineChart,
     PRMergedRatioLineChart,
     PRLinkedIssueLineChart,
-    MonthOrganizationLineChart,
+    MonthOrgCommitsLineChart,
+    MonthOrgEntropyLineChart,
   },
 };
 </script>

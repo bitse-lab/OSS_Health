@@ -12,7 +12,7 @@ import com.OSS.Health.service.software.productivity.*;
 public class metricsCalculateTest {
 
     @Autowired
-    private MonthPRService test;
+    private MonthChangedCodesService test;
 
     @Test
     public void testService() throws Exception {

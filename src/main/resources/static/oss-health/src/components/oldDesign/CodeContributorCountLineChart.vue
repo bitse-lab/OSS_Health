@@ -1,7 +1,6 @@
 <template>
-    <h2>Code Contributor Count</h2>
-    <p>Determine how many active pr creators, code reviewers, commit authors there are in the past 90 days.</p>
     <div class="all">
+      <h2>Code Contributor Count</h2>
       <!-- 按钮，点击时触发 fetchData 方法 -->
       <button @click="fetchData">加载数据</button>
   

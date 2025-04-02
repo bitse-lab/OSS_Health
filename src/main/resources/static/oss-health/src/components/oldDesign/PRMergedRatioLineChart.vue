@@ -1,8 +1,6 @@
 <template>
-    <h2>Long Term Contributors</h2>
-    <p>They have contributed to Rust for 3 years or more, and they rank in the top 80% in terms of number of commits in
-      at least three years.</p>
     <div class="all">
+      <h2>PR Merged Ratio</h2>
       <!-- 按钮，点击时触发 fetchData 方法 -->
       <button @click="fetchData">加载数据</button>
       

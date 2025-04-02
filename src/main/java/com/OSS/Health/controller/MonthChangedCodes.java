@@ -1,6 +1,6 @@
 package com.OSS.Health.controller;
 
-import com.OSS.Health.service.community.organization.MonthOrganizationService;
+import com.OSS.Health.service.software.productivity.MonthChangedCodesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,13 +10,13 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:8081")  // 允许来自 localhost:8081 的跨域请求
-public class MonthOrganization {
+public class MonthChangedCodes {
 
 	@Autowired
-    private MonthOrganizationService service;
+    private MonthChangedCodesService service;
 
-    @GetMapping("/api/monthorganization")
-    public List<Map<String, Object>> getMonthOrganization() {
+    @GetMapping("/api/monthchangedcodes")
+    public List<Map<String, Object>> getMonthChangedCodes() {
         return service.getMysqlData();
     }
 }
