@@ -1,29 +1,30 @@
 <template>
-    <!-- 整体垂直布局 -->
-    <div class="healthShow">
-        <!-- 展示当前选择的库信息 -->
-        <div class="repoShow">
-            <TopRepo />
-        </div>
-        <div class="repoShowPosition"></div>
-        <!-- 左侧展示侧边栏，右侧展示对应信息 -->
-        <div class="sideBarAndContent">
-            <!-- 侧边栏 -->
-            <div class="sideBar">
-                <SideBar />
-            </div>
-            <!-- 展示信息 -->
-             <div class="content">
-                <!-- 加载子路由 -->
-                <router-view></router-view> 
-             </div>
-        </div>
-    </div>
+  <el-layout class="healthShow">
+    <!-- 展示当前选择的库信息 -->
+    <el-header class="repoShow">
+      <TopRepo />
+    </el-header>
+
+    <!-- 左侧展示侧边栏，右侧展示对应信息 -->
+    <el-container class="sideBarAndContent">
+      <!-- 侧边栏 -->
+      <el-aside class="sideBar" width="220px">
+        <SideBar />
+      </el-aside>
+
+      <!-- 展示信息 -->
+      <el-main class="content">
+        <!-- 加载子路由 -->
+        <router-view></router-view>
+      </el-main>
+    </el-container>
+  </el-layout>
 </template>
 
 <script>
 import TopRepo from './HealthComponents/TopRepo.vue';
-import SideBar from './HealthComponents/SideBar.vue';
+import SideBar from './HealthComponents/SideBar_new.vue';
+
 export default {
   name: 'HealthShow',
   components: {
@@ -34,52 +35,45 @@ export default {
 </script>
 
 <style scoped>
-.healthShow{
-    display: flex;
-    flex-direction: column;
+.healthShow {
+  height: 100vh; /* 全屏高度 */
+  background-color: rgb(240, 248, 255); /* 背景颜色 */
 }
 
-.repoShow{
-    position: fixed; /* 固定定位 */
-    top: 5px;
-    left: 5px;
-    right: 5px;
-    z-index: 4;
+.repoShow {
+  height: 60px;
+  background-color: rgb(255, 255, 240);
+  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-bottom: 1px solid #ddd;
 }
 
-.repoShowPosition{
-    position: fixed;
-    left: 5px;
-    right: 5px;
-    top: 0px;
-    height: 60px;
-    background-color: white;
-    z-index: 3;
+.sideBarAndContent {
+  display: flex;
+  flex-direction: row;
 }
 
-.sideBarAndContent{
-    display: flex;
-    flex-direction: row;
+.sideBar {
+  background-color: white;
+  padding: 7px;
+  z-index: 99;
+  position: fixed;
+  top: 60px; /* 下面顶栏 */
+  left: 0;
+  width: 220px;
+  height: calc(100vh - 60px); /* 减去顶部栏 */
+  overflow: hidden; /* 禁止滚动条 */
 }
 
-.sideBar{
-    align-items: center; /* 垂直居中文本 */
-    width: 200px;
-    position: fixed; /* 固定定位 */
-    left: 5px; /* 固定在左侧 */
-    top:60px;
-    bottom: 0; /* 占满高度 */
-    padding: 10px;
-    background-color: rgb(250, 240, 230);
-    z-index: 2;
-}
-
-.content{
-    position: absolute;
-    top: 60px;
-    left: 230px;
-    right: 5px;
-    background-color: rgb(240, 248, 255);
-    z-index: 1;
+.content {
+  background-color: rgb(240, 248, 255);
+  z-index: 1;
+  padding: 20px;
+  margin-left: 220px; /* 与侧边栏宽度一致 */
+  margin-top: 60px;   /* 与顶部栏高度一致 */
+  min-height: calc(100vh - 60px); /* 保证至少占满可视区域 */
 }
 </style>

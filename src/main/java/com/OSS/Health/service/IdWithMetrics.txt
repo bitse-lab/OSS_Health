@@ -12,6 +12,8 @@
 "1.3.4" monthpr
 "2.1.1" monthorgcommits
 "2.1.2" monthorgentropy
+"2.1.3" monthvolunteerentropy
+"2.1.4" monthvolunteercommits
 "2.2.1" reviewratio
 "2.2.2" prmergedratio
 "2.2.3" prlinkedissue

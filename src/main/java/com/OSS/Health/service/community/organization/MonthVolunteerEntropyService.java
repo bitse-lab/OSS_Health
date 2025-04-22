@@ -17,11 +17,11 @@ import java.util.*;
 import java.util.stream.StreamSupport;
 
 @Service
-public class MonthOrgEntropyService{
+public class MonthVolunteerEntropyService{
 	@Autowired
     private MysqlDataMapper mysqlDataMapper;                                                                                                                                                                                                                       
 
-    private static final String MYSQL_ID = "2.1.2";	// 请替换为对应ID
+    private static final String MYSQL_ID = "2.1.3";	// 请替换为对应ID
     private static final String REPO_PATH = "D:/Plateform/Git/repositories/core"; // 请替换为git仓库存储位置
     
     // 用于存储每个提交的信息
@@ -111,84 +111,49 @@ public class MonthOrgEntropyService{
 	            }
 	        }
 	        
-	        // 根据users和domainUser补全commitDataList中的organization字段
-	        Map<String, String> latestUserOrg = new HashMap<>();  // 每个用户的最新组织记录
-
-	        for (CommitInfo commit : commitDataList) {
+	        // 删除组织用户
+	        Iterator<CommitInfo> iterator = commitDataList.iterator();
+	        while (iterator.hasNext()) {
+	            CommitInfo commit = iterator.next();
 	            String committer = commit.getCommitter();
-	            String email = commit.getEmail();
 
-	            if (!users.contains(committer)) {
-	                continue; // 非目标用户，跳过
-	            }
-
-	            if (email != null && email.contains("@")) {
-	                String domain = email.substring(email.indexOf("@") + 1).toLowerCase();
-
-	                if (domains.contains(domain)) {
-	                    // 当前 commit 使用了非公共域名，则更新当前 committer 的“最新组织”记录
-	                    latestUserOrg.put(committer, domain);
-	                    commit.setOrganization(domain);
-	                } else {
-	                    // 当前使用公共邮箱，尝试从 latestUserOrg 获取组织
-	                    if (latestUserOrg.containsKey(committer)) {
-	                        commit.setOrganization(latestUserOrg.get(committer));
-	                    }
-	                }
+	            if (users.contains(committer)) {
+	                iterator.remove();  // 删除组织用户的提交
 	            }
 	        }
 	        
-	        // 统计每个月的组织提交数
-	        Map<YearMonth, Map<String, Integer>> monthlyOrgCommits = new HashMap<>();
+	        // 统计每个月的 volunteer 提交数
+	        Map<YearMonth, Map<String, Integer>> monthlyVolunteerCommits = new HashMap<>();
 
 	        for (CommitInfo commit : commitDataList) {
 	            YearMonth yearMonth = YearMonth.from(commit.getCommitDate());
-	            String organization = commit.getOrganization();
+	            String committer = commit.getCommitter();
 
-	            monthlyOrgCommits
+	            monthlyVolunteerCommits
 	                .computeIfAbsent(yearMonth, k -> new HashMap<>())  // 初始化该月的组织提交映射
-	                .merge(organization, 1, Integer::sum);  // 统计该组织的提交数
-	        }
-	        
-	        // 删除每月统计中组织为 "unknown" 的条目
-	        for (Map<String, Integer> orgMap : monthlyOrgCommits.values()) {
-	            orgMap.remove("unknown");
+	                .merge(committer, 1, Integer::sum);  // 统计该组织的提交数
 	        }
 
-	        // 计算每个月的 Organization 信息熵（归一化）
+	        // 计算每个月的 Volunteer 信息熵
 	        Map<YearMonth, Double> monthlyEntropy = new HashMap<>();
 
-	        for (Map.Entry<YearMonth, Map<String, Integer>> entry : monthlyOrgCommits.entrySet()) {
+	        for (Map.Entry<YearMonth, Map<String, Integer>> entry : monthlyVolunteerCommits.entrySet()) {
 	            YearMonth yearMonth = entry.getKey();
-	            Map<String, Integer> orgCommitCounts = entry.getValue();
+	            Map<String, Integer> volunteerCommitCounts = entry.getValue();
 
-	            int totalCommits = orgCommitCounts.values().stream().mapToInt(Integer::intValue).sum();
-	            int orgCount = orgCommitCounts.size(); // 不同组织数
+	            int totalCommits = volunteerCommitCounts.values().stream().mapToInt(Integer::intValue).sum(); // 该月总提交数
 
-	            if (totalCommits == 0 || orgCount <= 1) {
-	                // 无法计算熵或只有一个组织，信息熵为0
-	                monthlyEntropy.put(yearMonth, 0.0);
-	                continue;
-	            }
-
-	            double entropy = orgCommitCounts.values().stream()
+	            double entropy = volunteerCommitCounts.values().stream()
 	                .mapToDouble(count -> {
-	                    double p = (double) count / totalCommits;
-	                    return p * Math.log(p) / Math.log(2);
+	                    double p = (double) count / totalCommits;  // 计算该 Organization 的占比
+	                    return p * Math.log(p) / Math.log(2);  // 计算 p_i * log_2(p_i)
 	                })
 	                .sum();
 
-	            entropy = -entropy;
-
-	            // 最大熵 = log2(组织数)
-	            double maxEntropy = Math.log(orgCount) / Math.log(2);
-	            double normalizedEntropy = entropy / maxEntropy;
-
-	            monthlyEntropy.put(yearMonth, normalizedEntropy);
+	            monthlyEntropy.put(yearMonth, -entropy); // 取负号得到最终信息熵
 	        }
 
-
-	        // 每月的组织信息熵统计
+	        // 每月的 Volunteer 信息熵统计
 	        for (Map.Entry<YearMonth, Double> entry : monthlyEntropy.entrySet()) {
 	            YearMonth ym = entry.getKey();
 	            Double entropyNum= entry.getValue(); 
