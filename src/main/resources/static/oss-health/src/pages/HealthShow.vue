@@ -1,43 +1,78 @@
 <template>
   <el-layout class="healthShow">
-    <!-- 展示当前选择的库信息 -->
+    <!-- 顶部栏 -->
     <el-header class="repoShow">
-      <TopRepo />
+      <TopBar />
     </el-header>
 
-    <!-- 左侧展示侧边栏，右侧展示对应信息 -->
+    <!-- 主体区域 -->
     <el-container class="sideBarAndContent">
       <!-- 侧边栏 -->
       <el-aside class="sideBar" width="220px">
         <SideBar />
       </el-aside>
 
-      <!-- 展示信息 -->
+      <!-- TopRepo 固定显示，带动画 -->
+      <el-collapse-transition>
+        <div v-show="!isHidden" class="fixed-toprepo">
+          <TopRepo />
+        </div>
+      </el-collapse-transition>
+
+      <!-- 主内容区域 -->
       <el-main class="content">
-        <!-- 加载子路由 -->
-        <router-view></router-view>
+        <router-view ></router-view>
       </el-main>
     </el-container>
   </el-layout>
 </template>
 
 <script>
-import TopRepo from './HealthComponents/TopRepo.vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import SideBar from './HealthComponents/SideBar_new.vue';
+import TopBar from './HealthComponents/TopBar.vue';
+import TopRepo from './HealthComponents/TopRepo.vue';
 
 export default {
   name: 'HealthShow',
   components: {
-    TopRepo,
     SideBar,
+    TopBar,
+    TopRepo,
+  },
+  setup() {
+    const isHidden = ref(false);
+    let lastScroll = 0;
+
+    const handleScroll = () => {
+      const current = window.scrollY;
+      if (current > lastScroll && current > 100) {
+        setTimeout(() => {
+        isHidden.value = true;
+        }, 500); // 向下滚动隐藏
+      } else if (current < lastScroll) {
+        isHidden.value = false; // 向上滚动显示
+      }
+      lastScroll = current;
+    };
+
+    onMounted(() => {
+      window.addEventListener('scroll', handleScroll);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('scroll', handleScroll);
+    });
+
+    return { isHidden };
   },
 };
 </script>
 
 <style scoped>
 .healthShow {
-  height: 100vh; /* 全屏高度 */
-  background-color: rgb(240, 248, 255); /* 背景颜色 */
+  height: 100vh;
+  background-color: rgb(240, 248, 255);
 }
 
 .repoShow {
@@ -61,19 +96,30 @@ export default {
   padding: 7px;
   z-index: 99;
   position: fixed;
-  top: 60px; /* 下面顶栏 */
+  top: 60px;
   left: 0;
   width: 220px;
-  height: calc(100vh - 60px); /* 减去顶部栏 */
-  overflow: hidden; /* 禁止滚动条 */
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+
+.fixed-toprepo {
+  position: fixed;
+  top: 60px; /* 紧贴 TopBar 下方 */
+  left: 228px; /* 紧贴 SideBar 右边 */
+  right: 8px;
+  z-index: 90;
+  background-color: rgb(250, 250, 240); /* 可自定义 */
+  border-bottom: 1px solid #ddd;
+  padding: 0px 20px;
 }
 
 .content {
   background-color: rgb(240, 248, 255);
   z-index: 1;
   padding: 20px;
-  margin-left: 220px; /* 与侧边栏宽度一致 */
-  margin-top: 60px;   /* 与顶部栏高度一致 */
-  min-height: calc(100vh - 60px); /* 保证至少占满可视区域 */
+  margin-left: 220px;
+  margin-top: 120px; /* TopBar + TopRepo 高度 */
+  min-height: calc(100vh - 60px);
 }
 </style>

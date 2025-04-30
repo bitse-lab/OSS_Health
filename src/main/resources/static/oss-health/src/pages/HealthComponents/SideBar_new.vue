@@ -1,12 +1,12 @@
 <template>
   <div class="sidebar">
     <div class="logo">
-      <img src="@/assets/logo.png" alt="logo" />
-      <span>OSS 健康监测系统</span>
+      <span>Navigation Bar </span>
+      <el-icon><Compass /></el-icon>
     </div>
 
     <el-menu
-      class="el-menu-vertical"
+      class="el-menu-vertical no-select"
       :default-active="selectedMenuItem"
       background-color="#2f4050"
       text-color="#fff"
@@ -15,7 +15,7 @@
     >
       <!-- OverView -->
       <el-menu-item index="OverView" @click="goToExactRoute('OverView', 'overViewTop')">
-        <el-icon><DataBoard /></el-icon>
+        <el-icon><Grid /></el-icon>
         <span>OverView</span>
       </el-menu-item>
 
@@ -23,7 +23,7 @@
       <el-sub-menu index="Software">
         <template #title>
           <el-icon><Cpu /></el-icon>
-          <span>Software</span>
+          <span >Software</span>
         </template>
         <el-menu-item index="Software-overview" @click="goToExactRoute('Software', 'softwareTop')">
           <el-icon><Menu /></el-icon> OverView
@@ -46,7 +46,7 @@
           <span>Community</span>
         </template>
         <el-menu-item index="Community-overview" @click="goToExactRoute('Community', 'communityTop')">
-          <el-icon><Tickets /></el-icon> OverView
+          <el-icon><Menu /></el-icon> OverView
         </el-menu-item>
         <el-menu-item index="Community-organization" @click="goToExactRoute('Community', 'communityOrganization')">
           <el-icon><OfficeBuilding /></el-icon> Organization
@@ -62,11 +62,11 @@
       <!-- Market -->
       <el-sub-menu index="Market">
         <template #title>
-          <el-icon><ShoppingCartFull /></el-icon>
+          <el-icon><Coin /></el-icon>
           <span>Market</span>
         </template>
         <el-menu-item index="Market-overview" @click="goToExactRoute('Market', 'marketTop')">
-          <el-icon><TrendCharts /></el-icon> OverView
+          <el-icon><Menu /></el-icon> OverView
         </el-menu-item>
         <el-menu-item index="Market-competitiveness" @click="goToExactRoute('Market', 'marketCompetitiveness')">
           <el-icon><Medal /></el-icon> Competitiveness
@@ -81,9 +81,10 @@
 
 <script setup>
 import {
-  DataBoard, Cpu, Menu, CircleCheck, SetUp, Histogram,
-  Avatar, Tickets, OfficeBuilding, BellFilled, MagicStick,
-  ShoppingCartFull, TrendCharts, Medal, Share
+  Compass,
+  Grid, Cpu, Menu, CircleCheck, SetUp, Histogram,
+  Avatar, OfficeBuilding, BellFilled, MagicStick,
+  Coin, Medal, Share
 } from '@element-plus/icons-vue'
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -145,5 +146,9 @@ onMounted(() => {
   height: 24px;
   width: auto;
   margin-right: 8px;
+}
+
+.no-select {
+  user-select: none;
 }
 </style>

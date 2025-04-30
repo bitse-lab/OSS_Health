@@ -1,6 +1,6 @@
 <template>
     <div class="all">
-        <h2>Organization Information Entropy</h2>
+        <h2>Organizational Contribution Diversity</h2>
         <!-- 按钮，点击时触发 fetchData 方法 -->
         <button @click="fetchData">加载数据</button>
         
@@ -78,7 +78,7 @@
             },
             yAxis: {
               type: 'value',
-              name: 'Number',
+              name: 'Org Entropy',
             },
             series: [{
               data: numbers,  // Y 轴数据为 number

@@ -6,13 +6,26 @@ import OverViewOSS from './pages/HealthComponents/OverViewOSS.vue';
 import SoftwareOSS from './pages/HealthComponents/SoftwareOSS.vue';
 import CommunityOSS from './pages/HealthComponents/CommunityOSS.vue';
 import MarketOSS from './pages/HealthComponents/MarketOSS.vue';
+import HomePage from './pages/HomePage.vue';
+import DocsPage from './pages/DocsPage.vue';
+import AboutPage from './pages/AboutPage.vue';
 
 const routes = [
   {
     path: "/",
+    name: "Start",
+    redirect: "/healthshow",
+  },
+  {
+    path: "/home",
+    name: "Home",
+    component: HomePage,
+  },
+  {
+    path: "/healthshow",
+    name: "Repos",
     component: HealthShow,
-    redirect: "overview",
-    // 定义子路由
+    redirect: "/healthshow/overview", // 默认跳转到 overview
     children: [
       {
         path: "overview",
@@ -35,6 +48,16 @@ const routes = [
         component: MarketOSS,
       },
     ],
+  },
+  {
+    path: "/docs",
+    name: "Docs",
+    component: DocsPage,
+  },
+  {
+    path: "/about",
+    name: "About",
+    component: AboutPage,
   },
 ];
 
