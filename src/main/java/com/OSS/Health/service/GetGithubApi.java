@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.logging.log4j.message.Message;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,14 +19,26 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class GetGithubApi{
 	private static final String GITHUB_API_URL = "https://api.github.com";
 	private static final String GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
-    private static final String REPO_OWNER = "vuejs"; // 请替换为仓库的拥有者
-    private static final String REPO_NAME = "core";   // 请替换为仓库名称
-    private static final String REPO_PATH = "D:/Plateform/Git/repositories/core"; // 请替换为git仓库存储位置
+//    private static final String REPO_OWNER = "mozilla"; // 请替换为仓库的拥有者
+//    private static final String REPO_NAME = "DeepSpeech";   // 请替换为仓库名称
+//    private static final String REPO_PATH = "E:/GithubRep/DeepSpeech"; // 请替换为git仓库存储位置
     private static final String DEAFULT_FOLDER_NAME = "Github_Api_Message"; //在对应git仓库位置下存储保存的api信息
     private static final String GITHUB_TOKEN = "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";  // 使用你自己的GitHub Personal Access Token
     private static final String GITHUB_TOKEN1 = "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"; //备用token
+    
+    private final String REPO_OWNER;
+    private final String REPO_NAME;
+    private final String REPO_PATH;
+    private String IN_USE_TOKEN= GITHUB_TOKEN;
+    
     private RestTemplate restTemplate= new RestTemplate();
     private ObjectMapper objectMapper= new ObjectMapper();
+    
+    public GetGithubApi(String repoOwner, String repoName, String repoPath) {
+        this.REPO_OWNER = repoOwner;
+        this.REPO_NAME = repoName;
+        this.REPO_PATH = repoPath;
+    }
     
     public boolean storeGithubApi() {
     	if(!initStoreGithubApi()) {
@@ -84,12 +97,6 @@ public class GetGithubApi{
         }
     	int page = 1;
 	    int perPage = 100; // 每页100个评论
-	    String token = GITHUB_TOKEN;	    
-	    // 设置认证信息
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.set("Authorization", "Bearer " + token);  // 添加认证信息
-	    // 创建一个包含认证信息的请求实体
-	    HttpEntity<String> entity = new HttpEntity<>(headers);
 	    // 获取所有 PR
 	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/pulls?state=all&page=%d&per_page=%d";
 	    // 创建一个 ArrayNode 来收集所有 PR 数据
@@ -97,7 +104,15 @@ public class GetGithubApi{
 	    while (true) {
 	        // 请求当前页的PR数据
 	        String url = String.format(urlTemplate, page, perPage);
-			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+			// ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+	        ResponseEntity<String> response = null;
+	        try {
+	        	response = fetchResponse(restTemplate, url);
+	        } catch (InterruptedException e) {
+				System.out.println(e.getMessage());
+			}
+	        if(response== null) return false;
+
 			JsonNode prArray = null;
             try {
                 prArray = objectMapper.readTree(response.getBody());
@@ -172,12 +187,6 @@ public class GetGithubApi{
         
         int page = 1;
 	    int perPage = 100; // 每页100个评论
-	    String token = GITHUB_TOKEN;	    
-	    // 设置认证信息
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.set("Authorization", "Bearer " + token);  // 添加认证信息
-	    // 创建一个包含认证信息的请求实体
-	    HttpEntity<String> entity = new HttpEntity<>(headers);
 	    // 获取所有 PRReview
 	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/pulls/%d/reviews?page=%d&per_page=%d";
 	    // 创建一个 ArrayNode 来收集所有 PRReview 数据
@@ -196,12 +205,14 @@ public class GetGithubApi{
             while (hasReviews) {
                 // 构建请求 URL
                 String url = String.format(urlTemplate, prNumber, page, perPage);
-                ResponseEntity<String> response = null;
 
                 try {
-                	response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);                    
-                    // 检查 Rate Limit
-                    checkRateLimit(response);
+                	ResponseEntity<String> response = null;
+                	try {
+        	        	response = fetchResponse(restTemplate, url);
+        	        } catch (InterruptedException e) {
+        				System.out.println(e.getMessage());
+        			}
                     // 每读取 200 个, 显示一次进度
                     ++getedApiNum;
                     if(getedApiNum% 200 == 0) {
@@ -218,9 +229,6 @@ public class GetGithubApi{
                     }
                 } catch (IOException e) {
                     System.err.println("Error reading review data from response: " + e.getMessage());
-                    return false;
-                } catch (InterruptedException e) {
-                    System.err.println("Rate limit exceeded. Retrying after sleep.");
                     return false;
                 }
             }
@@ -239,26 +247,7 @@ public class GetGithubApi{
         }
   	
     	return true;
-    }
-    
-    private void checkRateLimit(ResponseEntity<String> response) throws InterruptedException {
-        // 获取剩余的请求次数
-        String remaining = response.getHeaders().getFirst("X-RateLimit-Remaining");
-        // 获取重置时间
-        String reset = response.getHeaders().getFirst("X-RateLimit-Reset");
-
-        if (remaining != null && Integer.parseInt(remaining) <= 0) {
-            // 如果剩余请求次数为 0，计算需要等待的时间
-            long resetTime = Long.parseLong(reset);
-            long currentTime = System.currentTimeMillis() / 1000;
-            long waitTime = resetTime - currentTime + 1;  // 等待直到 rate limit 重置
-
-            Date currentDate = new Date(currentTime * 1000);
-            System.out.println("Rate limit exceeded. Sleeping for " + waitTime + " seconds."+ "Now time: "+ currentDate);
-            Thread.sleep(waitTime * 1000);  // 休眠，直到重置时间
-            System.out.println("Rate limit refresh.");
-        }
-    }    
+    }   
     
     private boolean storeStarData() {
         System.out.println("Start storeStarData.");
@@ -267,8 +256,6 @@ public class GetGithubApi{
         if (file.exists()) {
             return true;
         }
-
-        String token = GITHUB_TOKEN;
 
         // GraphQL 查询模板
         String queryTemplate = "{ \"query\": \"query { repository(owner: \\\"%s\\\", name: \\\"%s\\\") { stargazers(first: 100, after: %s) { edges { starredAt node { login } } pageInfo { endCursor hasNextPage } } } }\" }";
@@ -284,11 +271,17 @@ public class GetGithubApi{
 
             // 发送请求
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + token);
+            headers.set("Authorization", "Bearer " + IN_USE_TOKEN);
             headers.set("Content-Type", "application/json");
 
             HttpEntity<String> entity = new HttpEntity<>(query, headers);
-            ResponseEntity<String> response = restTemplate.exchange(GITHUB_GRAPHQL_URL, HttpMethod.POST, entity, String.class);
+            // ResponseEntity<String> response = restTemplate.exchange(GITHUB_GRAPHQL_URL, HttpMethod.POST, entity, String.class);
+            ResponseEntity<String> response = null;
+            try {
+	        	response = fetchResponse_GraphQL(restTemplate, GITHUB_GRAPHQL_URL, entity);
+	        } catch (InterruptedException e) {
+				System.out.println(e.getMessage());
+			}
             
             JsonNode jsonResponse;
             try {
@@ -331,8 +324,6 @@ public class GetGithubApi{
             return true;
         }
 
-        String token = GITHUB_TOKEN;
-
         // GraphQL 查询模板
         String queryTemplate = "{ \"query\": \"query { repository(owner: \\\"%s\\\", name: \\\"%s\\\") { forks(first: 100, after: %s) { edges { node { nameWithOwner createdAt } } pageInfo { endCursor hasNextPage } } } }\" }";
 
@@ -347,11 +338,17 @@ public class GetGithubApi{
 
             // 发送请求
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + token);
+            headers.set("Authorization", "Bearer " + IN_USE_TOKEN);
             headers.set("Content-Type", "application/json");
 
             HttpEntity<String> entity = new HttpEntity<>(query, headers);
-            ResponseEntity<String> response = restTemplate.exchange(GITHUB_GRAPHQL_URL, HttpMethod.POST, entity, String.class);
+            // ResponseEntity<String> response = restTemplate.exchange(GITHUB_GRAPHQL_URL, HttpMethod.POST, entity, String.class);
+            ResponseEntity<String> response = null;
+            try {
+	        	response = fetchResponse_GraphQL(restTemplate, GITHUB_GRAPHQL_URL, entity);
+	        } catch (InterruptedException e) {
+				System.out.println(e.getMessage());
+			}
 
             JsonNode jsonResponse;
             try {
@@ -394,12 +391,6 @@ public class GetGithubApi{
         }
     	int page = 1;
 	    int perPage = 100; // 每页100个
-	    String token = GITHUB_TOKEN;	    
-	    // 设置认证信息
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.set("Authorization", "Bearer " + token);  // 添加认证信息
-	    // 创建一个包含认证信息的请求实体
-	    HttpEntity<String> entity = new HttpEntity<>(headers);
 	    // 获取所有 Issue
 	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/issues?state=all&per_page=" + perPage + "&page=%d";
 	    // 创建一个 ArrayNode 来收集所有 Issue 数据
@@ -408,28 +399,14 @@ public class GetGithubApi{
 	    while (true) {
 	    	// 构建请求 URL
 	    	String url = String.format(urlTemplate, page);
-            ResponseEntity<String> response = null;
 
             try {
-            	response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);                    
-                // 检查 Rate Limit
-                if(!checkRateLimit_new(response)) {
-                	ResponseEntity<String> responseTmp= response;
-                	// 切换 token
-                    token = GITHUB_TOKEN1;
-                    headers = new HttpHeaders();
-                    headers.set("Authorization", "Bearer " + token);
-                    entity = new HttpEntity<>(headers);
-
-                    // 重新请求本页
-                    response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-
-                    // 再次检查 rate limit, 如果也限速了，等待默认token恢复速率
-                    if(!checkRateLimit_new(response)) {
-                    	checkRateLimit(responseTmp);
-                    	continue;
-                    }
-                }
+            	ResponseEntity<String> response = null;
+                try {
+    	        	response = fetchResponse(restTemplate, url);
+    	        } catch (InterruptedException e) {
+    				System.out.println(e.getMessage());
+    			}
                 // 每读取 200 个, 显示一次进度
                 ++getedApiNum;
                 if(getedApiNum% 200 == 0) {
@@ -450,10 +427,7 @@ public class GetGithubApi{
             } catch (IOException e) {
                 System.err.println("Error reading issue data from response: " + e.getMessage());
                 return false;
-            } catch (InterruptedException e) {
-                System.err.println("Rate limit exceeded. Retrying after sleep.");
-                return false;
-            }
+            } 
 	    }
 	    
 	    try {
@@ -468,14 +442,173 @@ public class GetGithubApi{
 	    return true;
     }
     
+    public boolean storeIssueData_GraphQL() {
+        System.out.println("Start storeIssueData.");
+        String fileName = REPO_PATH + "/" + DEAFULT_FOLDER_NAME + "/IssueData.json";
+        File file = new File(fileName);
+        if (file.exists()) {
+            return true;
+        }
+
+        String queryTemplate = "{ \"query\": \"query { repository(owner: \\\"%s\\\", name: \\\"%s\\\") { issues(first: 100, after: %s, states: [OPEN, CLOSED]) { edges { node { number title body state createdAt closedAt author { login } comments { totalCount } reactions { totalCount } } } pageInfo { endCursor hasNextPage } } } }\" }";
+
+        String endCursor = "null";
+        boolean hasNextPage = true;
+
+        ArrayNode allIssues = objectMapper.createArrayNode();
+
+        while (hasNextPage) {
+            String query = String.format(queryTemplate, REPO_OWNER, REPO_NAME, endCursor.equals("null") ? "null" : ("\\\"" + endCursor + "\\\""));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + IN_USE_TOKEN);
+            headers.set("Content-Type", "application/json");
+
+            HttpEntity<String> entity = new HttpEntity<>(query, headers);
+            ResponseEntity<String> response = null;
+            try {
+                response = fetchResponse_GraphQL(restTemplate, GITHUB_GRAPHQL_URL, entity);
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
+
+            JsonNode jsonResponse;
+            try {
+                jsonResponse = objectMapper.readTree(response.getBody());
+            } catch (IOException e) {
+                System.err.println("Error parsing the JSON response: " + e.getMessage());
+                return false;
+            }
+
+            JsonNode edges = jsonResponse.at("/data/repository/issues/edges");
+            if (edges.isArray()) {
+                for (JsonNode edge : edges) {
+                    allIssues.add(edge);
+                }
+            }
+
+            hasNextPage = jsonResponse.at("/data/repository/issues/pageInfo/hasNextPage").asBoolean();
+            endCursor = jsonResponse.at("/data/repository/issues/pageInfo/endCursor").asText();
+        }
+
+        try {
+            saveToJsonFile(allIssues, "IssueData");
+        } catch (IOException e) {
+            System.err.println("Error saving Issue data to file: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+    
+    private void checkRateLimit(ResponseEntity<String> response) throws InterruptedException {
+        // 获取剩余的请求次数
+        String remaining = response.getHeaders().getFirst("X-RateLimit-Remaining");
+        // 获取重置时间
+        String reset = response.getHeaders().getFirst("X-RateLimit-Reset");
+
+        if (remaining != null && Integer.parseInt(remaining) <= 20) {
+            // 如果剩余请求次数小于 20，计算需要等待的时间
+            long resetTime = Long.parseLong(reset);
+            long currentTime = System.currentTimeMillis() / 1000;
+            long waitTime = resetTime - currentTime + 1;  // 等待直到 rate limit 重置
+
+            Date currentDate = new Date(currentTime * 1000);
+            System.out.println("Rate limit exceeded. Sleeping for " + waitTime + " seconds."+ "Now time: "+ currentDate);
+            Thread.sleep(waitTime * 1000);  // 休眠，直到重置时间
+            System.out.println("Rate limit refresh.");
+        }
+    } 
+    
     // 如果速率被限制了就切换token，返回false，需要切换；yes不用切换
     private boolean checkRateLimit_new(ResponseEntity<String> response) throws InterruptedException {
         // 获取剩余的请求次数
         String remaining = response.getHeaders().getFirst("X-RateLimit-Remaining");
 
-        if (remaining != null && Integer.parseInt(remaining) <= 0) {
+        if (remaining != null && Integer.parseInt(remaining) <= 20) {
             return false;
         }
         return true;
     }  
+    
+    private void switchToken() {
+        if (IN_USE_TOKEN.equals(GITHUB_TOKEN)) {
+            IN_USE_TOKEN = GITHUB_TOKEN1;
+        } else {
+            IN_USE_TOKEN = GITHUB_TOKEN;
+        }
+        System.out.println("Switch Token");
+    }
+    
+    // 将 checkRateLimit_new 和 checkRateLimit 合并封装，返回response
+    private ResponseEntity<String> fetchResponse(
+            RestTemplate restTemplate, String url) throws InterruptedException{
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + IN_USE_TOKEN);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = null;
+        
+        try {
+        	response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        } catch(Exception e) {
+        	System.err.println(e.getMessage());
+        }
+
+        if (response == null || !checkRateLimit_new(response)) {
+        	switchToken();
+        	// 如果依旧被限速就进行等待
+        	url = "https://api.github.com/rate_limit";
+
+            headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + IN_USE_TOKEN);
+            entity = new HttpEntity<>(headers);
+            ResponseEntity<String> responseTmp= null;
+
+            try {
+                responseTmp = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+            } catch (Exception e) {
+                System.err.println("Error fetching rate limit info: " + e.getMessage());
+            }
+
+            if (responseTmp == null || !checkRateLimit_new(responseTmp)) {
+            	checkRateLimit(responseTmp);
+            }
+        }
+
+        return response;
+    }
+    
+    private ResponseEntity<String> fetchResponse_GraphQL(
+            RestTemplate restTemplate, String url, HttpEntity<String> entity) throws InterruptedException {
+
+        ResponseEntity<String> response = null;
+        try {
+        	response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        } catch(Exception e) {
+        	System.err.println(e.getMessage());
+        }
+
+        if (response == null || !checkRateLimit_new(response)) {
+        	switchToken();
+        	// 请求 /rate_limit，检测备用 token 是否有效
+            String rateLimitUrl = "https://api.github.com/rate_limit";
+            HttpHeaders newHeaders = new HttpHeaders();
+            newHeaders.set("Authorization", "Bearer " + IN_USE_TOKEN);
+            HttpEntity<String> newEntity = new HttpEntity<>(newHeaders);
+            ResponseEntity<String> responseTmp= null;
+        	try {
+        	    responseTmp = restTemplate.exchange(rateLimitUrl, HttpMethod.GET, newEntity, String.class);
+        	} catch (Exception e) {
+        	    System.err.println(e.getMessage());
+        	}
+
+            if (responseTmp == null || !checkRateLimit_new(responseTmp)) {
+                checkRateLimit(responseTmp);
+            }
+        }
+
+        return response;
+    }
+
 }

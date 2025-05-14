@@ -1,0 +1,401 @@
+[ {
+  "name" : "mozilla/deepspeech",
+  "stargazers" : 25013,
+  "rank" : 45
+}, {
+  "name" : "jadore801120/attention-is-all-you-need-pytorch",
+  "stargazers" : 8423,
+  "rank" : 174
+}, {
+  "name" : "paddlepaddle/paddle-lite",
+  "stargazers" : 7073,
+  "rank" : 205
+}, {
+  "name" : "kuprel/min-dalle",
+  "stargazers" : 3487,
+  "rank" : 357
+}, {
+  "name" : "docarray/docarray",
+  "stargazers" : 3046,
+  "rank" : 409
+}, {
+  "name" : "hzwer/ICCV2019-LearningToPaint",
+  "stargazers" : 2272,
+  "rank" : 509
+}, {
+  "name" : "intel/intel-extension-for-pytorch",
+  "stargazers" : 1845,
+  "rank" : 590
+}, {
+  "name" : "mit-han-lab/torchquantum",
+  "stargazers" : 1461,
+  "rank" : 708
+}, {
+  "name" : "bloc97/CrossAttentionControl",
+  "stargazers" : 1229,
+  "rank" : 794
+}, {
+  "name" : "sniklaus/sepconv-slomo",
+  "stargazers" : 1014,
+  "rank" : 892
+}, {
+  "name" : "nv-tlabs/gscnn",
+  "stargazers" : 895,
+  "rank" : 975
+}, {
+  "name" : "baidu-research/ncrf",
+  "stargazers" : 742,
+  "rank" : 1098
+}, {
+  "name" : "leaplabthu/dat",
+  "stargazers" : 693,
+  "rank" : 1148
+}, {
+  "name" : "openvinotoolkit/datumaro",
+  "stargazers" : 582,
+  "rank" : 1277
+}, {
+  "name" : "experiencor/self-driving-toy-car",
+  "stargazers" : 509,
+  "rank" : 1373
+}, {
+  "name" : "xavierpuigf/virtualhome",
+  "stargazers" : 473,
+  "rank" : 1443
+}, {
+  "name" : "karolzak/ipyplot",
+  "stargazers" : 408,
+  "rank" : 1593
+}, {
+  "name" : "p0p4k/vits2_pytorch",
+  "stargazers" : 374,
+  "rank" : 1691
+}, {
+  "name" : "intel/intel-extension-for-tensorflow",
+  "stargazers" : 335,
+  "rank" : 1804
+}, {
+  "name" : "xplip/pixel",
+  "stargazers" : 316,
+  "rank" : 1850
+}, {
+  "name" : "thinklab-sjtu/pygmtools",
+  "stargazers" : 296,
+  "rank" : 1930
+}, {
+  "name" : "ironjr/grokfast",
+  "stargazers" : 263,
+  "rank" : 2076
+}, {
+  "name" : "cbaziotis/neat-vision",
+  "stargazers" : 250,
+  "rank" : 2130
+}, {
+  "name" : "yhygao/cbim-medical-image-segmentation",
+  "stargazers" : 224,
+  "rank" : 2255
+}, {
+  "name" : "jrieke/shape-detection",
+  "stargazers" : 214,
+  "rank" : 2314
+}, {
+  "name" : "dingo-actual/infini-transformer",
+  "stargazers" : 194,
+  "rank" : 2444
+}, {
+  "name" : "tugstugi/pytorch-dc-tts",
+  "stargazers" : 184,
+  "rank" : 2498
+}, {
+  "name" : "megvii-research/tlc",
+  "stargazers" : 166,
+  "rank" : 2643
+}, {
+  "name" : "qizhuli/Weakly-Supervised-Panoptic-Segmentation",
+  "stargazers" : 160,
+  "rank" : 2709
+}, {
+  "name" : "yeungchenwa/FontDiffuser",
+  "stargazers" : 147,
+  "rank" : 2809
+}, {
+  "name" : "napsternxg/TwitterNER",
+  "stargazers" : 139,
+  "rank" : 2904
+}, {
+  "name" : "nredell/forecastML",
+  "stargazers" : 130,
+  "rank" : 3003
+}, {
+  "name" : "mindspore-lab/mindyolo",
+  "stargazers" : 121,
+  "rank" : 3103
+}, {
+  "name" : "johngettings/lihq",
+  "stargazers" : 113,
+  "rank" : 3200
+}, {
+  "name" : "gan3sh500/local-relational-nets",
+  "stargazers" : 112,
+  "rank" : 3216
+}, {
+  "name" : "navassherif98/recipe-generation-from-food-image",
+  "stargazers" : 104,
+  "rank" : 3332
+}, {
+  "name" : "gustiks/neuralogic",
+  "stargazers" : 96,
+  "rank" : 3466
+}, {
+  "name" : "shuweishao/af-sfmlearner",
+  "stargazers" : 91,
+  "rank" : 3556
+}, {
+  "name" : "DoganK01/YOLOV7-OBJECT-COUNTER-V1.2",
+  "stargazers" : 85,
+  "rank" : 3680
+}, {
+  "name" : "ansfl/MEMS-IMU-Denoising",
+  "stargazers" : 80,
+  "rank" : 3790
+}, {
+  "name" : "kingyuluk/rl-flappybird",
+  "stargazers" : 78,
+  "rank" : 3816
+}, {
+  "name" : "lucidrains/anymal-belief-state-encoder-decoder-pytorch",
+  "stargazers" : 73,
+  "rank" : 3945
+}, {
+  "name" : "ChrisCummins/paper-end2end-dl",
+  "stargazers" : 71,
+  "rank" : 4005
+}, {
+  "name" : "ANTsX/ANTsRNet",
+  "stargazers" : 65,
+  "rank" : 4169
+}, {
+  "name" : "fmpr/CrowdLayer",
+  "stargazers" : 63,
+  "rank" : 4228
+}, {
+  "name" : "nazmul-karim170/UNICON",
+  "stargazers" : 60,
+  "rank" : 4326
+}, {
+  "name" : "jackfrost1411/fire-detection",
+  "stargazers" : 58,
+  "rank" : 4391
+}, {
+  "name" : "tuttelikz/farabio",
+  "stargazers" : 54,
+  "rank" : 4509
+}, {
+  "name" : "ari-dasci/s-tsfe-dl",
+  "stargazers" : 51,
+  "rank" : 4628
+}, {
+  "name" : "DhilipSanjay/Detection-of-Sensitive-Data-Exposure-in-Images",
+  "stargazers" : 49,
+  "rank" : 4732
+}, {
+  "name" : "iamalexkorotin/Wasserstein2GenerativeNetworks",
+  "stargazers" : 48,
+  "rank" : 4772
+}, {
+  "name" : "nanxstats/deep-learning-recipes",
+  "stargazers" : 45,
+  "rank" : 4922
+}, {
+  "name" : "abdur75648/UTRNet-High-Resolution-Urdu-Text-Recognition",
+  "stargazers" : 43,
+  "rank" : 5008
+}, {
+  "name" : "BioMedAI-UCSC/InverseSR",
+  "stargazers" : 42,
+  "rank" : 5059
+}, {
+  "name" : "adnortje/deepvideo",
+  "stargazers" : 41,
+  "rank" : 5154
+}, {
+  "name" : "fabiocarrara/visual-sentiment-analysis",
+  "stargazers" : 40,
+  "rank" : 5244
+}, {
+  "name" : "DaizeDong/Unified-MoE-Compression",
+  "stargazers" : 40,
+  "rank" : 5241
+}, {
+  "name" : "NgoQuocBao1010/Exercise-Correction",
+  "stargazers" : 37,
+  "rank" : 5442
+}, {
+  "name" : "apacha/musicsymbolclassifier",
+  "stargazers" : 34,
+  "rank" : 5598
+}, {
+  "name" : "gt4sd/zero-shot-bert-adapters",
+  "stargazers" : 33,
+  "rank" : 5691
+}, {
+  "name" : "kyuyeonpooh/objects-that-sound",
+  "stargazers" : 32,
+  "rank" : 5765
+}, {
+  "name" : "sunnysai12345/KVMemnn",
+  "stargazers" : 31,
+  "rank" : 5855
+}, {
+  "name" : "nvidia-isaac-ros/isaac_ros_proximity_segmentation",
+  "stargazers" : 30,
+  "rank" : 5914
+}, {
+  "name" : "Wentong-DST/up-down-captioner",
+  "stargazers" : 29,
+  "rank" : 6029
+}, {
+  "name" : "vasanthakumarv/einops",
+  "stargazers" : 28,
+  "rank" : 6089
+}, {
+  "name" : "Cambridge-ICCS/fortran-tf-lib",
+  "stargazers" : 27,
+  "rank" : 6239
+}, {
+  "name" : "jgrss/cultionet",
+  "stargazers" : 26,
+  "rank" : 6272
+}, {
+  "name" : "deepeshdm/Neural-Style-Transfer",
+  "stargazers" : 25,
+  "rank" : 6459
+}, {
+  "name" : "sohailahmedkhan/Flood-Detection-from-Images-using-Deep-Learning",
+  "stargazers" : 25,
+  "rank" : 6461
+}, {
+  "name" : "OxWearables/asleep",
+  "stargazers" : 23,
+  "rank" : 6619
+}, {
+  "name" : "zdmc23/oneshot-audio",
+  "stargazers" : 23,
+  "rank" : 6643
+}, {
+  "name" : "DevMilk/UAV-Based-Cellular-Communication-Multi-Agent-DRL-Solution",
+  "stargazers" : 22,
+  "rank" : 6805
+}, {
+  "name" : "kovalalvi/beira",
+  "stargazers" : 21,
+  "rank" : 6929
+}, {
+  "name" : "hugohadfield/pytorch_image_regession",
+  "stargazers" : 21,
+  "rank" : 6969
+}, {
+  "name" : "irecsys/deepcarskit",
+  "stargazers" : 20,
+  "rank" : 7003
+}, {
+  "name" : "m3at/coco-panoptic",
+  "stargazers" : 19,
+  "rank" : 7207
+}, {
+  "name" : "tshrjn/qgen",
+  "stargazers" : 19,
+  "rank" : 7233
+}, {
+  "name" : "csinva/matching-with-gans",
+  "stargazers" : 19,
+  "rank" : 7252
+}, {
+  "name" : "HSG-AIML/GDA",
+  "stargazers" : 18,
+  "rank" : 7473
+}, {
+  "name" : "OSU-MLB/Fine-Tuning-Is-Fine-If-Calibrated",
+  "stargazers" : 18,
+  "rank" : 7492
+}, {
+  "name" : "thefcraft/nsfw-prompt-detection-sd",
+  "stargazers" : 17,
+  "rank" : 7655
+}, {
+  "name" : "gimnath-perera/plant-safe",
+  "stargazers" : 16,
+  "rank" : 7734
+}, {
+  "name" : "ardamavi/DCGAN-Sign-Language",
+  "stargazers" : 16,
+  "rank" : 7771
+}, {
+  "name" : "autonomio/wrangle",
+  "stargazers" : 15,
+  "rank" : 7908
+}, {
+  "name" : "cattidea/paddle-toolbox",
+  "stargazers" : 15,
+  "rank" : 7914
+}, {
+  "name" : "creinders/ChimeraMix",
+  "stargazers" : 14,
+  "rank" : 8150
+}, {
+  "name" : "Carmezim/crypto-twitter-sentiment-analysis",
+  "stargazers" : 14,
+  "rank" : 8181
+}, {
+  "name" : "SAIC-MONTREAL/CeBed",
+  "stargazers" : 14,
+  "rank" : 8289
+}, {
+  "name" : "idea-iitd/greed",
+  "stargazers" : 13,
+  "rank" : 8381
+}, {
+  "name" : "priyansh4320/Abstractive-Text-Summarization-Enhancing-Sequence-to-Sequence-Models-Using-Word-Sense-Disambiguatio",
+  "stargazers" : 13,
+  "rank" : 8535
+}, {
+  "name" : "xiawei999000/GBM_PCNSL_CNN_modeling",
+  "stargazers" : 13,
+  "rank" : 8551
+}, {
+  "name" : "xgr19/mousika",
+  "stargazers" : 12,
+  "rank" : 8620
+}, {
+  "name" : "Ren-Research/OneProxy",
+  "stargazers" : 12,
+  "rank" : 8733
+}, {
+  "name" : "Lithicsoft/Lithicsoft-Trainer-Studio",
+  "stargazers" : 12,
+  "rank" : 8848
+}, {
+  "name" : "Qengineering/YoloFastest-ncnn-Jetson-Nano",
+  "stargazers" : 11,
+  "rank" : 8904
+}, {
+  "name" : "Sourav-B98/ALZHEIMERS-PREDICTION-CNN",
+  "stargazers" : 11,
+  "rank" : 9021
+}, {
+  "name" : "haihabi/PyNNcml",
+  "stargazers" : 11,
+  "rank" : 9173
+}, {
+  "name" : "lorenanicole/telenovela_script_generator",
+  "stargazers" : 10,
+  "rank" : 9290
+}, {
+  "name" : "gmum/umwpl2021",
+  "stargazers" : 10,
+  "rank" : 9400
+}, {
+  "name" : "VectorInstitute/fed-rag",
+  "stargazers" : 10,
+  "rank" : 9566
+} ]
