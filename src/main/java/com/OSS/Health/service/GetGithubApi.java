@@ -483,7 +483,10 @@ public class GetGithubApi{
             JsonNode edges = jsonResponse.at("/data/repository/issues/edges");
             if (edges.isArray()) {
                 for (JsonNode edge : edges) {
-                    allIssues.add(edge);
+                	JsonNode node = edge.get("node");
+                    if (node != null) {
+                        allIssues.add(node);
+                    }
                 }
             }
 
