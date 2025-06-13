@@ -2,21 +2,27 @@ package com.OSS.Health.service;
 
 import com.OSS.Health.mapper.MysqlDataMapper;
 import com.OSS.Health.mapper.MysqlWeightMapper;
-import com.OSS.Health.model.MysqlDataModel;
 import com.OSS.Health.model.MysqlWeightModel;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class CalculateWeight {
-	private static final String SAMPLE_REPO_JSON= "D:/Plateform/Git/repositories/OSS_Health/resources/sampleRep_deep-learning_1_new.json";
+
+    private static final String SAMPLE_REPO_JSON = "D:/Plateform/Git/repositories/OSS_Health/resources/sampleRep_deep-learning_1_new.json";
+    private static final String CLONE_PATH = "E:/GithubRep";
 
     @Autowired
     private MysqlDataMapper mysqlDataMapper;
@@ -49,7 +55,9 @@ public class CalculateWeight {
 
         for (String id : allIds) {
             List<Double> values = new ArrayList<>();
-
+            
+//            for(int i = 0; i < Math.min(50, repos.size()); i++) {
+//            	RepoInfo repo = repos.get(i);
             for (RepoInfo repo : repos) {
                 if (!repo.name.contains("/")) {
                     System.out.println("Invalid repository name: " + repo.name);
@@ -60,12 +68,48 @@ public class CalculateWeight {
                 String repoOwnerOnly = repo.name.substring(0, repo.name.lastIndexOf("/"));
                 String tableName = repoOwnerOnly + "_" + generateSafeTableName(repoOwnerOnly, repoNameOnly);
 
-                List<Map<String, Object>> records = mysqlDataMapper.getMysqlDataModelNoS1_new(tableName, id);
-                List<Double> recordValues = records.stream()
-                        .map(record -> ((Number) record.get("number")).doubleValue())
-                        .collect(Collectors.toList());
+                // 获取本地git库路径
+                String repoPath = CLONE_PATH + File.separator + repoNameOnly;
 
-                values.addAll(recordValues);
+                // 用 JGit 获取第一个和最后一个 commit 时间（Date 类型）
+                Date[] firstLast = getFirstAndLastCommitDate(repoPath);
+                if (firstLast == null || firstLast[0] == null || firstLast[1] == null) {
+                    System.out.println("Failed to get commit times for repo: " + repoNameOnly);
+                    continue;
+                }
+                Date startDate = firstLast[0];
+                Date endDate = firstLast[1];
+
+                // 查询数据并过滤时间范围
+                List<Map<String, Object>> records = mysqlDataMapper.getMysqlDataModelNoS1_new(tableName, id);
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                ZoneId zone = ZoneId.systemDefault();
+
+                List<Double> filteredValues = records.stream()
+                    .filter(record -> {
+                        Object timeObj = record.get("time");
+                        if (timeObj == null) return false;
+                        Date recordDate = null;
+                        try {
+                            if (timeObj instanceof Date) {
+                                recordDate = (Date) timeObj;
+                            } else if (timeObj instanceof String) {
+                                LocalDate localDate = LocalDate.parse((String) timeObj, formatter);
+                                recordDate = Date.from(localDate.atStartOfDay(zone).toInstant());
+                            } else {
+                                return false;
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Date parse error: " + e.getMessage());
+                            return false;
+                        }
+                        return !recordDate.before(startDate) && !recordDate.after(endDate);
+                    })
+                    .map(record -> ((Number) record.get("number")).doubleValue())
+                    .collect(Collectors.toList());
+
+                values.addAll(filteredValues);
             }
 
             dataMap.put(id, values);
@@ -76,14 +120,13 @@ public class CalculateWeight {
         for (String id : allIds) {
             List<Double> values = dataMap.get(id);
             if (values == null || values.size() <= 1) {
-                normalizedData.put(id, List.of()); // 数据不足
+                normalizedData.put(id, List.of());
                 continue;
             }
 
             double min = Collections.min(values);
             double max = Collections.max(values);
 
-            // 如果 max == min，标准化后将缺乏差异性，熵设最大
             if (Math.abs(max - min) < 1e-8) {
                 normalizedData.put(id, List.of());
                 continue;
@@ -105,7 +148,7 @@ public class CalculateWeight {
         for (String id : allIds) {
             List<Double> normVals = normalizedData.get(id);
             if (normVals == null || normVals.size() <= 1) {
-                entropyMap.put(id, 1.0); // 熵最大，权重最小
+                entropyMap.put(id, 1.0);
                 continue;
             }
 
@@ -114,7 +157,7 @@ public class CalculateWeight {
             double sum = normVals.stream().mapToDouble(Double::doubleValue).sum();
 
             if (sum == 0.0) {
-                entropyMap.put(id, 1.0); // 全 0 情况，信息缺失
+                entropyMap.put(id, 1.0);
                 continue;
             }
 
@@ -155,28 +198,47 @@ public class CalculateWeight {
 
         return true;
     }
-    
-    // 获得安全的表名，防止超出64字符
+
+    // JGit 获取第一个和最后一个 commit 的 Date 数组： [firstCommitDate, lastCommitDate]
+    private Date[] getFirstAndLastCommitDate(String repoPath) {
+        try (Git git = Git.open(new File(repoPath))) {
+            Iterable<RevCommit> commits = git.log().call();
+
+            Date firstCommitDate = null;
+            Date lastCommitDate = null;
+
+            for (RevCommit commit : commits) {
+                Date commitDate = commit.getAuthorIdent().getWhen();
+                if (lastCommitDate == null || commitDate.after(lastCommitDate)) {
+                    lastCommitDate = commitDate;
+                }
+                if (firstCommitDate == null || commitDate.before(firstCommitDate)) {
+                    firstCommitDate = commitDate;
+                }
+            }
+            return new Date[] {firstCommitDate, lastCommitDate};
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // 生成安全表名，防止超长
     public static String generateSafeTableName(String owner, String name) {
         String prefix = owner + "_";
         int maxLength = 64;
-
         int allowedNameLength = maxLength - prefix.length();
         if (name.length() <= allowedNameLength) {
             return name;
         }
-
         return name.substring(0, allowedNameLength);
     }
-    
+
     private static class RepoInfo {
         public String name;
         public int stargazers;
         public int rank;
-        
-        // 添加无参构造函数
         public RepoInfo() {}
-
         public RepoInfo(String name, int stargazers, int rank) {
             this.name = name;
             this.stargazers = stargazers;
@@ -184,4 +246,3 @@ public class CalculateWeight {
         }
     }
 }
-
