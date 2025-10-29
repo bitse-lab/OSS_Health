@@ -13,11 +13,11 @@ import org.apache.ibatis.annotations.Select;
 public interface MysqlWeightMapper {
 
     // 插入一条记录
-    @Insert("INSERT INTO cfg_metric_weight (id, weight) VALUES (#{id}, #{weight})")
+    @Insert("INSERT INTO cfg_metric_weight (id, weight, A, B, C) VALUES (#{id}, #{weight}, #{A}, #{B}, #{C})")
     void insertMysqlWeight(MysqlWeightModel entity);
     
     //读取数据
-    @Select("SELECT id, weight FROM cfg_metric_weight")
+    @Select("SELECT id, weight, A, B, C FROM cfg_metric_weight")
     List<Map<String, Object>> getMysqlWeightModel();
     
     //清空 cfg_metric_weight

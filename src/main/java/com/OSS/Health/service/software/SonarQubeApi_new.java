@@ -226,9 +226,6 @@ public class SonarQubeApi_new {
     	insertIfPresent("1.2.2", metricMap.get("cognitive_complexity"), entity);
     	insertIfPresent("1.2.3", metricMap.get("vulnerabilities"), entity);
     	insertIfPresent("1.2.4", metricMap.get("comment_lines_density"), entity);
-    	
-    	insertIfPresent("1.3.1", metricMap.get("lines"), entity);
-    	insertIfPresent("1.3.2", metricMap.get("ncloc"), entity);
     }
     
     private void insertIfPresent(String id, Double value, MysqlDataModel entity) {

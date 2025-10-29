@@ -1,0 +1,101 @@
+- Health Status Summary
+Overall classification: Sub-healthy. Key evidence and rationale: Software maintainability indicators are deteriorating (technicaldebt rising from 173 to 344 through 2025-10; complexity up to 318; cognitivecomplexity up to 461; codesmells creeping up to 71), while community activity and capacity are contracting (monthcommit fell from 90s in 2024 to 29 by 2025-09; codecontributorcount/total down from 39 to 24 by 2025-09; prmergedratio declined to ~0.60 by 2025-09). Some positives exist (duplicatedlinesdensity steadily down to 29 by 2025-10; commentlinesdensity up to 5.6 by 2025-10; bugs near zero), but they do not offset the broader downward activity and increasing complexity/debt. Note: Evaluation ignores the most recent month in each series.
+
+- Key Metric Interpretation (What–Why–How Analysis)
+Metric: technicaldebt (Software Quality)
+What: After a sharp reduction in 2024-08/09 (173), debt climbed steadily to 344 by 2025-10 (ignoring 2025-11).
+Why: Likely accumulation from feature work and limited refactoring; declining contributor base and lower review throughput can allow debt to grow unchecked.
+How: Establish a debt budget per release, tag and prioritize debt items, schedule regular refactoring sprints, add quality gates in CI (e.g., failing builds on net debt increase), and track debt burn-down.
+
+Metric: codesmells (Software Quality)
+What: Dropped to 34 in 2024-08/09, then gradually rose to 71 by 2025-10 (ignoring 2025-11).
+Why: Increased complexity without proportional refactoring; fewer reviewers and reduced commit activity can lower code hygiene.
+How: Enforce static analysis gating, adopt coding standards with automated linters, require smell remediation in PRs touching affected modules, and add “cleanup” issues to each milestone.
+
+Metric: duplicatedlinesdensity (Software Quality)
+What: Spiked to 35.4 in 2024-10, then improved steadily to 29 by 2025-10 (ignoring 2025-11).
+Why: Initial duplication surge likely from rapid feature integration; subsequent reduction suggests targeted deduplication efforts.
+How: Continue DRY enforcement, add duplication checks to CI, refactor common utilities, and provide templates/patterns to avoid copy-paste across modules.
+
+Metric: complexity (Software Quality)
+What: Fell to 170 in 2024-08/09, then trended upward to 318 by 2025-10 (ignoring 2025-11).
+Why: Features added with limited architectural simplification, plus fewer contributors reviewing design choices.
+How: Introduce architecture review for complex PRs, split large modules, cap function/module complexity in CI, and track complexity budgets per component.
+
+Metric: cognitivecomplexity (Software Quality)
+What: Decreased to 271 in 2024-09, then rose consistently to 461 by 2025-10 (ignoring 2025-11).
+Why: Increased branching and nested logic without simplification; reduced reviewer bandwidth to enforce readability.
+How: Promote smaller, composable functions, refactor nested logic, add readability guidelines, and use linters that measure cognitive complexity thresholds.
+
+Metric: commentlinesdensity (Software Quality/Docs)
+What: Declined to ~4.0 in late 2024, then improved to 5.6 by 2025-10 (ignoring 2025-11).
+Why: Renewed documentation emphasis and possibly onboarding aids.
+How: Maintain momentum by setting minimum documentation standards per PR, adopting docstring checkers, and dedicating reviewers to documentation quality.
+
+Metric: bugs (Software Reliability)
+What: 1 in 2024-07, then 0 thereafter through 2025-10 (ignoring 2025-11).
+Why: Effective bug triage and/or limited reporting; could also reflect lower activity masking defects.
+How: Sustain test coverage, expand runtime checks, and encourage users to report issues; ensure low bug counts reflect true quality, not under-reporting.
+
+Metric: monthcommit (Community Activity)
+What: High in 2024-08/09 (97/91), then fell sharply with volatility, reaching a trough of 3 in 2025-06 and recovering to 29 by 2025-09 (ignore 2025-10).
+Why: Contributor decline and possible project fatigue or shifting priorities; reduced organizational and volunteer throughput.
+How: Run contribution sprints, publish a clear roadmap, curate “good first issues,” improve review SLAs to reduce contributor wait times, and celebrate contributor milestones.
+
+Metric: monthorgcommits (Community Capacity)
+What: Strong in 2024-09/12 (64), then dropped markedly to 1 in 2025-06, with partial recovery to 21 by 2025-09 (ignore 2025-10).
+Why: Organizational focus shift, bandwidth constraints, or internal reprioritization; potential maintainers’ availability issues.
+How: Allocate dedicated maintainer time, set org-level quarterly goals, cross-train maintainers, and automate CI/release tasks to free time for core development.
+
+Metric: monthorgentropy (Community Distribution)
+What: Highly volatile with multiple zero months in 2025 (e.g., 2025-02, 2025-04, 2025-06, 2025-10), and moderate-to-high diversity in 2025-09 (~0.79) (ignore 2025-10).
+Why: Periods dominated by one or few org contributors or data gaps; inconsistent participation across months.
+How: Diversify maintainers across teams, rotate code ownership, and set participation targets to avoid single-maintainer bottlenecks.
+
+Metric: monthvolunteerentropy (Community Distribution)
+What: High diversity in 2024-08/10 (~0.95/0.90), then 0 from 2024-11 through 2025-09 (all zeros).
+Why: Indicates contributions dominated by a single volunteer or a cessation of volunteer diversity; possibly fewer active volunteers or measurement issues.
+How: Recruit and onboard new volunteers, create mentorship pairs, and run starter tasks to broaden volunteer base.
+
+Metric: monthvolunteercommits (Community Contributions)
+What: Volunteers contribute small volumes in 2025, mostly single-digit per month, ranging from 2 to 10, with occasional dips to 2–3 (e.g., 2 in 2025-06, 3 in 2025-07), and modest recovery to 8 by 2025-09 (ignore later months).
+Why: Reduced volunteer engagement or onboarding friction; slower reviews discourage sustained contributions.
+How: Improve newcomer documentation, set clear contribution pathways, recognize volunteer efforts (release notes shout-outs, badges), and tighten review SLAs to keep momentum.
+
+Metric: prmergedratio (Community Process/Throughput)
+What: Declined from ~0.85 in 2025-01 to ~0.60 by 2025-09 (ignore 2025-10).
+Why: Review bandwidth constraints, stricter standards without guidance, or growing PR backlog; contributor drop may leave fewer maintainers to merge.
+How: Implement triage rotations, define merge criteria and reviewer checklists, automate CI checks to speed reviews, and set target merge SLAs to reduce queue times.
+
+Metric: codecontributorcount/total (Community Size)
+What: Declined from 39 in 2024-10 to 24 by 2025-09 (ignore 2025-10).
+Why: Attrition, fewer new joiners, and possibly less visible project momentum or onboarding support.
+How: Outreach via community events, publish contribution guides, highlight project roadmap and impact, and pair new contributors with mentors.
+
+Metric: monthstar (Market Attention)
+What: No stars recorded throughout 2024-07 to 2025-09 (all zeros).
+Why: Limited external visibility, marketing, or releases; possibly niche audience or data capture gaps.
+How: Announce releases via blogs and social media, write “What’s new” posts, present at meetups, and improve README/demo assets to attract attention.
+
+- Conclusions and Recommendations
+Overall trajectory: Sub-healthy. The project remains active but shows clear stress: maintainability metrics (technicaldebt, complexity, cognitivecomplexity, codesmells) are worsening; community capacity and engagement are shrinking (monthcommit, codecontributorcount/total, prmergedratio), and organizational and volunteer diversity are inconsistent (monthorgentropy, monthvolunteerentropy). Positives include declining duplicatedlinesdensity, improving commentlinesdensity, and near-zero bugs, which indicate some targeted quality efforts are working.
+
+Strengths:
+- Low bug counts and improving documentation quality.
+- Reduced code duplication since the 2024-10 spike.
+- Some recovery in organizational commits by 2025-09.
+
+Risks:
+- Rising technical debt and complexity threaten future velocity and reliability.
+- Fewer contributors and lower commit volumes increase bus-factor risk.
+- Declining PR merge ratio and entropy metrics suggest review bottlenecks and concentration of effort.
+- No observable market traction (monthstar = 0), limiting new contributor inflow.
+
+Next-step actions:
+- Technical: Launch a refactoring and debt-reduction program with CI quality gates (debt, complexity, smells), and schedule debt sprints each release.
+- Process: Establish review SLAs, triage rotations, and merge checklists; automate CI to speed PR throughput and raise prmergedratio back above 0.75.
+- Community: Invest in onboarding (docs, starter issues, mentorship), run contributor sprints, and proactive outreach to lift codecontributorcount/total and monthcommit.
+- Organization: Allocate sustained maintainer time, diversify code ownership, and monitor monthorgentropy and monthvolunteerentropy to avoid single-contributor concentration.
+- Market: Increase visibility via release announcements, demos, talks, and improved project landing materials to attract users and contributors.
+
+Note: All observations exclude the most recent month in each metric series, per the evaluation requirement.

@@ -1,0 +1,148 @@
+- Health Status Summary
+Overall classification: Unhealthy
+Key evidence and brief rationale:
+- Community activity has collapsed: monthcommit has fallen to low single digits (0–5/month) since late 2023, with many 0–2 months and occasional 3–5 spikes in 2024; near-zero by early 2025 (ignoring the most recent month). monthorgcommits are even lower (0–2/month during 2023–2025), and monthvolunteercommits show similar low single-digit patterns.
+- Process instability: prmergedratio, previously ~0.7–0.8, is volatile in 2024 (including a 0.43 dip in Nov 2024) and deteriorates in early 2025 (~0.2–0.33).
+- Software risk accumulation: technicaldebt, codesmells, complexity, and cognitivecomplexity surged in 2022–2023 and then plateaued at high levels, indicating unresolved structural issues; monthchangedcodes collapsed to many zero months with sporadic very large spikes, suggesting infrequent but massive changes rather than steady, maintainable development.
+- Market interest is weakening: monthstar has declined to low 20s per month through late 2024 and remains modest in early 2025.
+
+- Key Metric Interpretation (What–Why–How Analysis)
+Metric: monthcommit (Community Activity)
+What: Down to low single digits (0–5/month) since late 2023; mostly 0–2 with occasional 3–5 months in 2024; near-zero by early 2025. Many months are zero (e.g., late 2023 and multiple months in 2024–2025).
+Why: Likely contributor attrition, reduced roadmap activity, and possible prioritization shifts. Process friction (volatile merges) and accumulated technical debt may disincentivize contributions.
+How: 
+- Reignite cadence with a quarterly roadmap, small “good first issue” batches, and contributor sprints.
+- Reduce friction: triage PRs weekly, set SLAs for reviews, and publish contribution guidelines.
+- Fund or allocate maintainer time to unblock key areas; monitor review backlog and establish release trains.
+
+Metric: monthorgcommits (Community Activity)
+What: Low single digits (0–2/month) in 2023–2025, mirroring the general activity decline; several months at zero.
+Why: Organizational maintenance appears minimal—either deprioritized or shifted elsewhere; possible reliance on volunteers who are also inactive.
+How: 
+- Secure institutional sponsorship for core maintenance; assign rotating on-call maintainers.
+- Track org-level goals and publish status updates to re-engage internal teams.
+
+Metric: monthvolunteercommits (Community Activity)
+What: Low single digits with sporadic months at 3–5 in 2024; mostly 0–1 in early 2025.
+Why: Volunteers may be intermittent; unclear ownership and high technical complexity can discourage drive-by contributions.
+How: 
+- Improve onboarding: sample projects, starter tasks, mentorship.
+- Lower complexity in contributor-facing modules to reduce entry barriers.
+
+Metric: prmergedratio (Community Process)
+What: Historically ~0.7–0.8, trending down since 2021; in 2024 highly volatile: 0 in Feb, 0.22 in Mar, then partial recovery across mid–late 2024 (0.35–0.75) with a clear dip in Nov 2024 to 0.43; early 2025 deteriorates (~0.2–0.33).
+Why: Sparse reviews, maintainer bandwidth constraints, and possibly stricter quality gates amid technical debt. Volatility suggests inconsistent triage and batching behavior.
+How:
+- Implement weekly merge windows and reviewer rotation.
+- Automate CI gates and linting to speed approvals; use labels (needs-review, ready-to-merge) and dashboards.
+- Track merge ratio targets per release; escalate stale PRs after fixed thresholds.
+
+Metric: codecontributorcount/total (Community Size)
+What: Peaked ~60 in late 2021; steady decline through 2022–2024; down to single digits in 2024–2025 (e.g., 6–14 in 2024; ~4–8 in early 2025).
+Why: Reduced project momentum, fewer active initiatives, higher complexity, and process friction deter participation.
+How:
+- Relaunch outreach: community calls, blog posts, and tagging newcomers in issues.
+- Recognize contributions (CHANGELOG credits, badges) and offer low-complexity tasks.
+
+Metric: longtermcontributors (Community Stability)
+What: Continues to grow (from ~9 in mid-2021 to ~44 by 2024–2025), indicating retained core maintainers even amid broader attrition.
+Why: A small, committed cohort remains engaged, likely custodial maintenance or stewardship.
+How:
+- Empower core maintainers with clear roles, release ownership, and decision-making support.
+- Prevent burnout: distribute workload and introduce “rest cycles.”
+
+Metric: technicaldebt (Software Quality)
+What: Sharp rise across 2019–2023, step-jump in Jan 2022, then plateau at a high level (~9,934) since mid-2023.
+Why: Large feature merges without refactoring, legacy accumulation, and limited ongoing maintenance; plateau reflects stalled remediation rather than resolution.
+How:
+- Launch a debt-reduction program: prioritize top 5 hotspots by impact; define measurable targets per quarter.
+- Integrate debt budgets into PRs and releases; enforce refactoring alongside new features.
+
+Metric: codesmells (Software Quality)
+What: Grew steadily through 2019–2023, large jump in early 2022; plateau around ~1,856 since mid-2023.
+Why: Rapid evolution and insufficient code hygiene; limited reviews/cleanup amid declining activity.
+How:
+- Enforce linting and code-style checks; add static analysis gates.
+- Schedule “cleanup sprints” and track smell reduction KPIs.
+
+Metric: duplicatedlinesdensity (Software Quality)
+What: Improved from ~30% in 2020 down to ~21.7–22% since 2022; stable through 2023–2025.
+Why: Some refactoring and consolidation likely occurred pre-2022; later stability suggests limited ongoing changes.
+How:
+- Target remaining high-duplication modules for deduplication; encourage utility abstractions and shared libraries.
+
+Metric: complexity (Software Complexity)
+What: Climbed to ~6,380 by 2023, then flat; earlier sharp increases in 2022.
+Why: Feature accretion without architectural simplification; fewer refactors during low-activity periods.
+How:
+- Apply modularization and boundary definitions; break up large functions/classes.
+- Track cyclomatic complexity budgets; require design reviews for complex changes.
+
+Metric: cognitivecomplexity (Software Complexity)
+What: Increased to ~5,068 by 2023, then plateau; mirrors complexity trend.
+Why: Deeply nested logic and cross-cutting concerns; limited documentation and tests exacerbate cognitive load.
+How:
+- Promote readability standards, smaller functions, and guard clauses.
+- Expand tests and documentation to reduce mental overhead.
+
+Metric: commentlinesdensity (Documentation/Quality)
+What: Around 18% in 2020–2021, decreased to ~14.2% since 2022 and stable.
+Why: Commentary fell behind code changes; later low activity didn’t improve coverage.
+How:
+- Require minimal docstrings per new/changed function; add developer notes for complex areas.
+- Run documentation drives to lift coverage toward ~18–20%.
+
+Metric: monthchangedcodes (Software Activity)
+What: Collapsed since late 2023, with many zero months and sporadic large spikes (e.g., 2024-08 ≈ 1,714; 2024-11 ≈ 3,062; 2025-04 ≈ 1,732), indicating infrequent bulk updates rather than steady iteration.
+Why: Batched merges, large vendor drops, or mechanized codegen; low continuous integration cadence; potential technical debt paydowns or dependency syncs done irregularly.
+How:
+- Favor smaller, frequent changes; enforce max change-size thresholds per PR and schedule regular release trains.
+- Tag and audit bulk updates to ensure reviewability and maintainability.
+
+Metric: monthorgentropy (Community Distribution)
+What: Near-zero in 2022–2025, indicating highly concentrated or absent org activity; occasional brief upticks.
+Why: One or very few org contributors or none active; insufficient distribution/engagement inside the organization.
+How:
+- Broaden participation across teams; assign rotating maintainers; track per-team contributions in dashboards.
+
+Metric: monthvolunteerentropy (Community Distribution)
+What: High variability 2018–2023, dropping and sporadic/zero in 2024–2025, implying uneven volunteer participation.
+Why: Narrow set of active volunteers; sporadic bursts reflect one-off contributors.
+How:
+- Create contributor cohorts and mentorship groups; distribute issues to multiple volunteers to balance entropy.
+
+Metric: bugs (Software Defects)
+What: Low and stable around 8–9 since 2022, consistently ~9 since mid-2023.
+Why: Either effective bug triage or under-reporting due to low feature activity and limited testing breadth.
+How:
+- Maintain vigilance: run periodic test sweeps and fuzzing; ensure bug reporting templates are accessible.
+- Link PRs to issues to improve traceability and coverage.
+
+Metric: monthstar (Market Interest)
+What: Gradual decline from higher volumes in 2019–2021 to ~20–26 per month in late 2024; early 2025 remains modest (e.g., 15–35).
+Why: Reduced visibility and fewer releases; broader ecosystem competition; lower community activity dampens discovery.
+How:
+- Publish release notes and roadmap updates; blog and social amplification.
+- Showcase use cases and integrations; engage with downstream projects for cross-promotion.
+
+- Conclusions and Recommendations
+Overall trajectory: The project is Unhealthy—community activity and organizational contributions have dropped to low single digits with frequent zero months; process metrics (prmergedratio) are volatile and worsening in 2025; software quality indicators (technicaldebt, codesmells, complexity, cognitivecomplexity) are high and flat, implying unresolved structural risks; market interest is softening.
+
+Strengths:
+- A cadre of longtermcontributors continues to grow, suggesting core stewardship remains.
+- Bugs remain low and stable, hinting at limited new surface area and a reasonably stable baseline.
+- Duplicate density improved since 2020 and has held steady.
+
+Risks:
+- Sustained low activity and thin review bandwidth increase the probability of regressions and security blind spots.
+- Accumulated technical debt and complexity hinder new contributions and releases.
+- Volatile and deteriorating prmergedratio signals process friction and contributor frustration.
+- Declining market interest reduces influx of new users and contributors.
+
+Next-step actions:
+- Community revitalization: schedule monthly community calls, publish a three-month roadmap, run contributor sprints, and seed “good first issues.” Recognize contributions in releases and docs.
+- Process stabilization: institute weekly review/merge windows, reviewer rotations, and PR SLAs; automate CI gates (linting, tests, security scans) and add dashboards for merge ratios and backlog.
+- Technical remediation: launch a targeted refactoring plan focused on top complexity/debt hotspots; set quarterly reduction targets; require architectural reviews for complex changes; limit bulk drops in favor of smaller, frequent commits.
+- Visibility and adoption: increase release cadence, publish changelogs and blog posts, highlight case studies, and cross-promote with adjacent projects to lift monthstar and attract contributors.
+
+Note: All evaluations ignore the most recent month of data to avoid partial-month distortions.
