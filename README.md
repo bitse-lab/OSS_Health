@@ -6,6 +6,7 @@
 
 ## Project Structure
 
+```
 OSS_Health/
 │
 ├─ src/
@@ -19,6 +20,7 @@ OSS_Health/
 │ └─ cann_analysis_reports/ # Example output reports
 │
 └─ README
+```
 
 ---
 
