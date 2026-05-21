@@ -266,7 +266,8 @@ public class CodeContributorCountService_new{
 	// 获取 PR 提交者（Submitters）
 	private Map<String, List<LocalDate>> getPRSubmitters() throws IOException {
 	    Map<String, List<LocalDate>> prSubmitters = new HashMap<>();
-	    File file = new File(REPO_PATH + "/Github_Api_Message/PRData.json");  // 路径请按需调整
+//	    File file = new File(REPO_PATH + "/Github_Api_Message/PRData.json");  // 路径请按需调整
+	    File file = new File("F:/github_api_repos/"+ REPO_NAME+ "/PRData.json");  // 路径请按需调整
 	    JsonNode root = objectMapper.readTree(file);
 	    for (JsonNode prNode : root) {
 	        String author = prNode.get("user").get("login").asText();
@@ -280,7 +281,8 @@ public class CodeContributorCountService_new{
 	// 获取代码审核者（Reviewers）
 	private Map<String, List<LocalDate>> getReviewers() throws IOException {
 	    Map<String, List<LocalDate>> reviewers = new HashMap<>();
-	    File file = new File(REPO_PATH + "/Github_Api_Message/PRReviewData.json");
+//	    File file = new File(REPO_PATH + "/Github_Api_Message/PRReviewData.json");
+	    File file = new File("F:/github_api_repos/"+ REPO_NAME+ "/PRReviewData.json");
 	    JsonNode root = objectMapper.readTree(file);
 
 	    // 遍历每个 PR 编号（如 "155", "2"）

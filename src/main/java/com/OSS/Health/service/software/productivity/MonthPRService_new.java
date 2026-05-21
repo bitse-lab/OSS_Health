@@ -97,7 +97,8 @@ public class MonthPRService_new{
 	// 从本地文件提取PR，并且将每月的pr数量存入map		
 	private Map<YearMonth, Integer> getPRData() throws IOException {
 		Map<YearMonth, Integer> monthlyPRCount = new HashMap<>();
-		String filePath= REPO_PATH+ "/Github_Api_Message/PRData.json";
+//		String filePath= REPO_PATH+ "/Github_Api_Message/PRData.json";
+		String filePath= "F:/github_api_repos/"+ REPO_NAME+ "/PRData.json";
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		

@@ -132,7 +132,8 @@ public class PRMergedRatioService_new{
 
 	private List<PRData> getPRData() throws IOException {
 	    List<PRData> result = new ArrayList<PRData>();
-	    File file = new File(REPO_PATH + "/Github_Api_Message/PRData.json");
+//	    File file = new File(REPO_PATH + "/Github_Api_Message/PRData.json");
+	    File file = new File("F:/github_api_repos/"+ REPO_NAME+ "/PRData.json");
 	    ObjectMapper mapper = new ObjectMapper();
 	    JsonNode root = mapper.readTree(file);
 

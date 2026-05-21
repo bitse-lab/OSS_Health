@@ -137,11 +137,13 @@ public class ReviewRatioService_new{
 	    ObjectMapper mapper = new ObjectMapper();
 
 	    // 读取 PR 基本信息（创建时间）
-	    File prFile = new File(REPO_PATH + "/Github_Api_Message/PRData.json");
+//	    File prFile = new File(REPO_PATH + "/Github_Api_Message/PRData.json");
+	    File prFile = new File("F:/github_api_repos/"+ REPO_NAME+ "/PRData.json");
 	    JsonNode prArray = mapper.readTree(prFile);
 
 	    // 读取 PR 的 review 数量信息（key 为 PR 编号，value 为 review 列表）
-	    File reviewFile = new File(REPO_PATH + "/Github_Api_Message/PRReviewData.json");
+//	    File reviewFile = new File(REPO_PATH + "/Github_Api_Message/PRReviewData.json");
+	    File reviewFile = new File("F:/github_api_repos/"+ REPO_NAME+ "/PRReviewData.json");
 	    JsonNode reviewMapNode = mapper.readTree(reviewFile);
 
 	    // 构建 Map<String, Integer>：key 是 PR 编号，value 是该 PR 的 review 数量

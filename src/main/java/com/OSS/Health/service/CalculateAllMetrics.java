@@ -63,7 +63,7 @@ public class CalculateAllMetrics {
             throw new IllegalStateException("Repo info not initialized. Call init() first.");
         }
     	
-    	// mysqlDataMapper.dropTable(REPO_OWNER+'_'+REPO_NAME);
+//    	mysqlDataMapper.dropTable(REPO_OWNER+'_'+REPO_NAME);
     	
     	mysqlDataMapper.createTable(REPO_OWNER+'_'+REPO_NAME);
     	

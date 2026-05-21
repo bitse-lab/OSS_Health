@@ -95,7 +95,8 @@ public class MonthIssueService_new{
 	// 从本地文件提取Issue，并且将每月的issue数量存入map		
 	private Map<YearMonth, Integer> getIssueData() throws IOException {
 		Map<YearMonth, Integer> monthIssueCount = new HashMap<>();
-		String filePath= REPO_PATH+ "/Github_Api_Message/IssueData.json";
+//		String filePath= REPO_PATH+ "/Github_Api_Message/IssueData.json";
+		String filePath= "F:/github_api_repos/"+ REPO_NAME+ "/IssueData.json";
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		

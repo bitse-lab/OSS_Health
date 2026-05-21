@@ -9,8 +9,8 @@ onMounted(async () => {
     const response = await axios.get("http://localhost:8080/api/duplicatedlinesdensity");
     const data = response.data; // 假设后端返回的是 List<Map<String, Object>>
     
-    if (Array.isArray(data) && data.length === 1) {
-      const firstMap = data[0]; 
+    if (Array.isArray(data) && data.length >= 1) {
+      const firstMap = data[data.length - 1]; 
       const key = Object.keys(firstMap)[0];
       value.value = firstMap[key]; 
     }

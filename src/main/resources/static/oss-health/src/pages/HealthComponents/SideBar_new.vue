@@ -23,7 +23,7 @@
       <el-sub-menu index="Software">
         <template #title>
           <el-icon><Cpu /></el-icon>
-          <span >Software</span>
+          <span>Software</span>
         </template>
         <el-menu-item index="Software-overview" @click="goToExactRoute('Software', 'softwareTop')">
           <el-icon><Menu /></el-icon> OverView
@@ -75,6 +75,21 @@
           <el-icon><Share /></el-icon> Influence
         </el-menu-item>
       </el-sub-menu>
+
+      <!-- 分隔线 -->
+      <el-divider style="background-color: #4a5f7f; margin: 10px 0;" />
+
+      <!-- Health Report -->
+      <el-menu-item index="HealthReport" @click="goToRoute('HealthReport')">
+        <el-icon><Document /></el-icon>
+        <span>Health Report</span>
+      </el-menu-item>
+
+      <!-- Sustainability Prediction -->
+      <el-menu-item index="SustainPredict" @click="goToRoute('SustainPredict')">
+        <el-icon><DataAnalysis /></el-icon>
+        <span>Sustain Predict</span>
+      </el-menu-item>
     </el-menu>
   </div>
 </template>
@@ -84,7 +99,7 @@ import {
   Compass,
   Grid, Cpu, Menu, CircleCheck, SetUp, Histogram,
   Avatar, OfficeBuilding, BellFilled, MagicStick,
-  Coin, Medal, Share
+  Coin, Medal, Share, Document, DataAnalysis
 } from '@element-plus/icons-vue'
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -95,6 +110,12 @@ const route = useRoute()
 // 当前选中的菜单项（带子项）
 const selectedMenuItem = ref('OverView')
 
+// 跳转到指定路由（用于新页面，不需要 hash）
+const goToRoute = (routeName) => {
+  router.push({ name: routeName })
+}
+
+// 跳转到指定路由并滚动到指定位置（用于原有页面）
 const goToExactRoute = (routeName, hash = '') => {
   if (hash && !hash.startsWith('#')) hash = '#' + hash
   if (route.name === routeName) {
@@ -150,5 +171,10 @@ onMounted(() => {
 
 .no-select {
   user-select: none;
+}
+
+/* 分隔线样式优化 */
+:deep(.el-divider--horizontal) {
+  margin: 15px 0;
 }
 </style>

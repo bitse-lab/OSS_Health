@@ -23,8 +23,8 @@ public class GetGithubApi{
 //    private static final String REPO_NAME = "DeepSpeech";   // 请替换为仓库名称
 //    private static final String REPO_PATH = "E:/GithubRep/DeepSpeech"; // 请替换为git仓库存储位置
     private static final String DEAFULT_FOLDER_NAME = "Github_Api_Message"; //在对应git仓库位置下存储保存的api信息
-    private static final String GITHUB_TOKEN = "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";  // 使用你自己的GitHub Personal Access Token
-    private static final String GITHUB_TOKEN1 = "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"; //备用token
+    private static final String GITHUB_TOKEN = "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";  // 使用你自己的GitHub Personal Access Token
+    private static final String GITHUB_TOKEN1 = "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"; //备用token
     
     private final String REPO_OWNER;
     private final String REPO_NAME;

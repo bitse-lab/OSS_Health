@@ -48,6 +48,8 @@
         <h2 id="communityVigor" class="sub-title">Vigor</h2>
         <el-row :gutter="20">
           <el-col :span="12"><el-card class="chart-card"><CodeContributorCountLineChart /></el-card></el-col>
+          <el-col :span="12"><el-card class="chart-card"><MonthVolunteerEntropyLineChart /></el-card></el-col>
+          <el-col :span="12"><el-card class="chart-card"><LongTermContributors /></el-card></el-col>
         </el-row>
       </div>
     </div>
@@ -64,6 +66,8 @@ import PRLinkedIssueLineChart from '@/components/oldDesign/PRLinkedIssueLineChar
 import MonthOrgCommitsLineChart from '@/components/oldDesign/MonthOrgCommitsLineChart.vue';
 import MonthOrgEntropyLineChart from '@/components/oldDesign/MonthOrgEntropyLineChart.vue';
 import MonthVolunteerCommitsLineChart from '@/components/oldDesign/MonthVolunteerCommitsLineChart.vue';
+import MonthVolunteerEntropyLineChart from '@/components/oldDesign/MonthVolunteerEntropyLineChart.vue';
+import LongTermContributors from '@/components/oldDesign/LongTermContributors.vue';
 
 export default {
     name: 'CommunityOSS',
@@ -77,6 +81,8 @@ export default {
       MonthOrgCommitsLineChart,
       MonthOrgEntropyLineChart,
       MonthVolunteerCommitsLineChart,
+      MonthVolunteerEntropyLineChart,
+      LongTermContributors,
     },
 };
 </script>
