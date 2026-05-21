@@ -1,6 +1,7 @@
 package com.OSS.Health.service.community.vigor;
 
 import com.OSS.Health.mapper.LongTermContributorMapper;
+import com.OSS.Health.mapper.MysqlDataMapper;
 import com.OSS.Health.model.LongTermContributor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,15 @@ public class LongTermContributorService {
 	@Autowired
     private LongTermContributorMapper longTermContributorMapper;
 	
+	@Autowired
+    private MysqlDataMapper mysqlDataMapper;
+	
 	public List<LongTermContributor> getLongTermContributor() {
         return longTermContributorMapper.getLongTermContributor();
+    }
+	
+	public List<Map<String, Object>> getMysqlData() {
+		return mysqlDataMapper.getMysqlDataModelNoS1("2.3.2");
     }
 
     public void generateMonthlyReport() throws Exception {

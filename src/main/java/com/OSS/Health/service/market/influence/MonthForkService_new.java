@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.StreamSupport;
@@ -120,18 +121,40 @@ public class MonthForkService_new{
 	    }
         JsonNode rootNode = objectMapper.readTree(jsonFile);
         
+        // GitCode的JSON结构是数组，每个元素包含fork信息
         for (JsonNode forkNode : rootNode) {
-        	JsonNode starredAtNode = forkNode.get("node").get("createdAt");
-            if (starredAtNode != null) {
-                String starredAtStr = starredAtNode.asText(); // 获取日期字符串
-                LocalDate starredDate = LocalDate.parse(starredAtStr.substring(0, 10)); // 提取 YYYY-MM-DD
-                forkDataList.add(starredDate);
+        	// GitCode使用created_at字段表示fork创建时间
+        	JsonNode createdAtNode = forkNode.get("created_at");
+            if (createdAtNode != null) {
+                String createdAtStr = createdAtNode.asText(); // 获取日期字符串
+                // GitCode的时间格式：2025-10-21T14:29:21.714+08:00
+                // 需要解析这种格式并提取日期部分
+                LocalDate createdDate = parseGitCodeDate(createdAtStr);
+                if (createdDate != null) {
+                    forkDataList.add(createdDate);
+                }
             }
         }	
 
 	    return forkDataList;
 	}
 	
+	/**
+	 * 解析GitCode的日期格式：2025-10-21T14:29:21.714+08:00
+	 * @param dateStr GitCode API返回的日期字符串
+	 * @return LocalDate对象，解析失败返回null
+	 */
+	private LocalDate parseGitCodeDate(String dateStr) {
+	    try {
+	        // 提取日期部分 YYYY-MM-DD
+	        if (dateStr != null && dateStr.length() >= 10) {
+	            return LocalDate.parse(dateStr.substring(0, 10));
+	        }
+	    } catch (Exception e) {
+	        System.err.println("Failed to parse date: " + dateStr + ", error: " + e.getMessage());
+	    }
+	    return null;
+	}
 	
 	// 获取第一个提交的时间
     private LocalDate getFirstCommitDate(List<RevCommit> commits) {

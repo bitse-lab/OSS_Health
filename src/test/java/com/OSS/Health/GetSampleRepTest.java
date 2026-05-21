@@ -14,7 +14,7 @@ public class GetSampleRepTest {
     @Test
     public void testService() throws Exception {
         // 调用服务方法
-        if(!test.multiGitClone()) {
+        if(!test.multiGitClone_gitcode()) {
         	System.out.println("Test error.");
         }else {
         	System.out.println("Test successful.");

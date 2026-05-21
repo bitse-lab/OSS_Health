@@ -134,7 +134,7 @@ public class PRLinkedIssueService_new{
 	
 	private List<PRData> getPRData() throws IOException {
 		List<PRData> prDataList = new ArrayList<PRData>();
-		String filePath= REPO_PATH+ "/Github_Api_Message/PRData.json";
+		String filePath= REPO_PATH+ "/Github_Api_Message/PRData.json"; // 修改文件路径以适配GitCode
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		
@@ -142,22 +142,34 @@ public class PRLinkedIssueService_new{
         JsonNode rootNode = objectMapper.readTree(jsonFile);
         
         for (JsonNode prNode : rootNode) {
-            String prId = prNode.get("id").asText();
+            // GitCode使用number作为PR标识，而不是id
+            String prId = prNode.get("number").asText();
 
-            LocalDate commitTime = LocalDate.parse(prNode.get("created_at").asText().substring(0, 10));
+            // 解析GitCode的时间格式，去掉时区信息
+            String createdAtStr = prNode.get("created_at").asText();
+            // GitCode时间格式: "2025-10-20T21:10:29+08:00"
+            LocalDate commitTime = LocalDate.parse(createdAtStr.substring(0, 10));
 
-            // Check if the PR is linked to an Issue "https://docs.github.com/zh/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue"
-            // Keywords for linking PRs to issues
+            // Check if the PR is linked to an Issue
+            // 检查GitCode特有的close_related_issue字段
+            boolean hasCloseRelatedIssue = prNode.has("close_related_issue") && 
+                                         prNode.get("close_related_issue").asInt() > 0;
+            
+            // 同时检查PR标题和描述中的关键词链接
             String[] keywords = {"close", "closes", "closed", "fix", "fixes", "fixed", "resolve", "resolves", "resolved"};
-        	// Regular expression pattern to match keywords and issues in PR title and body
-            String keywordPattern = "(?i)\\b(" + String.join("|", keywords) + ")\\b\\s*(\\S+)?(\\s*#\\d+)";
-            // Combine the title and body for the search
-            String combinedText = prNode.get("title").asText() + " " + prNode.get("body").asText();
-            // Create a pattern matcher for detecting keywords with issue numbers
+        	String keywordPattern = "(?i)\\b(" + String.join("|", keywords) + ")\\b\\s*(\\S+)?(\\s*#\\d+)";
+            
+            String title = prNode.has("title") ? prNode.get("title").asText() : "";
+            String body = prNode.has("body") ? prNode.get("body").asText() : "";
+            String combinedText = title + " " + body;
+            
             Pattern pattern = Pattern.compile(keywordPattern);
             Matcher matcher = pattern.matcher(combinedText);
             
-            Boolean isLinked= matcher.find();
+            boolean hasKeywordLink = matcher.find();
+            
+            // 如果有close_related_issue字段大于0，或者在文本中找到关键词链接，则认为是linked
+            Boolean isLinked = hasCloseRelatedIssue || hasKeywordLink;
 
             // Create a new PRData object and add it to the list
             PRData prData = new PRData(prId, commitTime, isLinked);

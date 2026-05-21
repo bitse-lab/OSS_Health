@@ -121,10 +121,15 @@ public class MonthStarService_new{
         JsonNode rootNode = objectMapper.readTree(jsonFile);
         
         for (JsonNode starNode : rootNode) {
-        	JsonNode starredAtNode = starNode.get("starredAt");
+        	// 修改：GitCode使用 starred_at 字段（下划线格式）而不是 starredAt（驼峰格式）
+        	JsonNode starredAtNode = starNode.get("starred_at");
             if (starredAtNode != null) {
                 String starredAtStr = starredAtNode.asText(); // 获取日期字符串
-                LocalDate starredDate = LocalDate.parse(starredAtStr.substring(0, 10)); // 提取 YYYY-MM-DD
+                // 修改：GitCode的时间格式包含时区信息，需要处理
+                // 格式如："2025-09-27T18:10:06.634+08:00"
+                // 提取日期部分 YYYY-MM-DD
+                String dateStr = starredAtStr.substring(0, 10);
+                LocalDate starredDate = LocalDate.parse(dateStr);
                 starDataList.add(starredDate);
             }
         }	

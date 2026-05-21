@@ -137,9 +137,18 @@ public class PRMergedRatioService_new{
 	    JsonNode root = mapper.readTree(file);
 
 	    for (JsonNode pr : root) {
-	        String id = pr.get("id").asText();
-	        LocalDate createdAt = LocalDate.parse(pr.get("created_at").asText().substring(0, 10));
-	        boolean isMerged = pr.has("merged_at") && !pr.get("merged_at").isNull();
+	        // GitCode使用number作为PR标识，而不是id
+	        String id = pr.get("number").asText();
+	        
+	        // GitCode的时间格式包含时区信息，需要截取日期部分
+	        String createdAtStr = pr.get("created_at").asText();
+	        LocalDate createdAt = LocalDate.parse(createdAtStr.substring(0, 10));
+	        
+	        // GitCode使用merged_at字段判断是否合并
+	        // 如果merged_at字段存在且不为空字符串，则表示已合并
+	        boolean isMerged = pr.has("merged_at") && 
+	                          !pr.get("merged_at").isNull() && 
+	                          !pr.get("merged_at").asText().isEmpty();
 
 	        result.add(new PRData(id, createdAt, isMerged));
 	    }

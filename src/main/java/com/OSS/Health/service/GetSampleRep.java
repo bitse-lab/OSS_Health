@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 public class GetSampleRep {
 	private static final String IN_FILE= "resources/topic_deep-learning_1.json";
 	private static final String OUT_FILE= "resources/sampleRep_deep-learning_1.json";
-	private static final String SAMPLE_REPO_JSON= "D:/Plateform/Git/repositories/OSS_Health/resources/sampleRep_deep-learning_1_new.json";
-	private static final String CLONE_PATH= "E:/GithubRep";
+	private static final String SAMPLE_REPO_JSON= "D:/Plateform/Git/repositories/OSS_Health_gitcode/resources/openharmony_repos.json";
+	private static final String CLONE_PATH= "E:/GithubRep2";
 
     private static class RepoInfo {
         public String name;
@@ -167,6 +167,94 @@ public class GetSampleRep {
         }
     }
     
+    public boolean multiGitClone_gitcode() {
+        int successCount = 0;
+        int failCount = 0;
+        List<String> failedRepos = new ArrayList<>();
+        
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            List<RepoInfo> repos = mapper.readValue(
+                new File(SAMPLE_REPO_JSON), 
+                new TypeReference<List<RepoInfo>>() {}
+            );
+
+            for (RepoInfo repo : repos) {
+                String repoNameOnly = repo.name.substring(repo.name.lastIndexOf("/") + 1);
+                
+                // 关键修改：将SSH URL改为HTTPS URL
+                // 原SSH格式：git@gitcode.com:OpenHarmony/xxx.git
+                // 新HTTPS格式：https://gitcode.com/OpenHarmony/xxx.git
+                String httpsUrl = "https://gitcode.com/" + repo.name + ".git";
+                String localPath = CLONE_PATH + "/" + repoNameOnly;
+
+                File repoDir = new File(localPath);
+                if (repoDir.exists()) {
+                    System.out.println("Repository already exists, skipping: " + localPath);
+                    successCount++; // 已存在的仓库算作成功
+                    continue;
+                }
+
+                System.out.println("Cloning: " + httpsUrl + " into " + localPath);
+                
+                // 使用HTTPS克隆，无需任何SSH配置
+                ProcessBuilder builder = new ProcessBuilder("git", "clone", httpsUrl, localPath);
+                builder.redirectErrorStream(true);
+                
+                try {
+                    Process process = builder.start();
+                    
+                    // 读取输出
+                    try (BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(process.getInputStream()))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            System.out.println(line);
+                        }
+                    }
+
+                    int exitCode = process.waitFor();
+                    if (exitCode != 0) {
+                        System.out.println("Git clone failed for " + repo.name + " with exit code " + exitCode);
+                        failCount++;
+                        failedRepos.add(repo.name);
+                        continue; // 继续下一个仓库，不中断循环
+                    } else {
+                        System.out.println("Successfully cloned: " + repo.name);
+                        successCount++;
+                    }
+                    
+                } catch (Exception e) {
+                    System.err.println("Exception while cloning " + repo.name + ": " + e.getMessage());
+                    failCount++;
+                    failedRepos.add(repo.name);
+                    continue; // 继续下一个仓库
+                }
+            }
+            
+            // 打印最终统计信息
+            System.out.println("\n========== 克隆任务完成统计 ==========");
+            System.out.println("总计处理仓库: " + (successCount + failCount));
+            System.out.println("成功克隆: " + successCount);
+            System.out.println("失败克隆: " + failCount);
+            
+            if (!failedRepos.isEmpty()) {
+                System.out.println("\n失败的仓库列表:");
+                for (String failedRepo : failedRepos) {
+                    System.out.println("  - " + failedRepo);
+                }
+            }
+            System.out.println("=======================================");
+            
+            return failCount == 0; // 如果没有失败，返回true，否则返回false
+            
+        } catch (Exception e) {
+            System.err.println("Fatal error in multiGitClone_gitcode: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
     public boolean multiGitClone() {
         try {
             // 解析 JSON
@@ -176,7 +264,7 @@ public class GetSampleRep {
             for (RepoInfo repo : repos) {
             	String repoNameOnly = repo.name.substring(repo.name.lastIndexOf("/") + 1);
             	
-                String sshUrl = "git@github.com:" + repo.name + ".git";
+                String sshUrl = "git@gitcode.com:" + repo.name + ".git";
                 String localPath = CLONE_PATH + "/" + repoNameOnly;
 
                 File repoDir = new File(localPath);
@@ -187,6 +275,11 @@ public class GetSampleRep {
 
                 System.out.println("Cloning: " + sshUrl + " into " + localPath);
                 ProcessBuilder builder = new ProcessBuilder("git", "clone", sshUrl, localPath);
+                
+                // 设置环境变量以跳过主机密钥检查
+                builder.environment().put("GIT_SSH_COMMAND", 
+                    "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no");
+                
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
                 

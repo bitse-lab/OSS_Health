@@ -15,8 +15,8 @@ import com.OSS.Health.service.software.productivity.*;
 
 @SpringBootTest
 public class metricsCalculateTest_new {
-	private static final String CLONE_PATH= "D:/Plateform/Git/repositories";
-	private static final String repoName = "vuejs/core";
+	private static final String CLONE_PATH= "E:/GithubRep2";
+	private static final String repoName = "openharmony/kernel_liteos_a";
 	
 	@Autowired
     private CalculateAllMetrics test;

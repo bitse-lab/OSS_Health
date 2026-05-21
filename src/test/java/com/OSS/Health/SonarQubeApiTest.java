@@ -10,8 +10,8 @@ import com.OSS.Health.service.software.SonarQubeApi_new;
 
 @SpringBootTest
 public class SonarQubeApiTest {
-	private static final String CLONE_PATH= "D:/Plateform/Git/repositories";
-	private static final String repoName = "vuejs/core";
+	private static final String CLONE_PATH= "E:/GithubRep2";
+	private static final String repoName = "openharmony/kernel_liteos_a";
 	
 	@Autowired
     private SonarQubeApi_new test;

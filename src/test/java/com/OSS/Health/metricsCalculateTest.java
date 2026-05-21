@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.OSS.Health.service.community.organization.*;
+import com.OSS.Health.service.community.resilience.*;
+import com.OSS.Health.service.community.vigor.CodeContributorCountService_new;
 import com.OSS.Health.service.market.influence.*;
 import com.OSS.Health.service.software.productivity.*;
 
@@ -12,11 +14,12 @@ import com.OSS.Health.service.software.productivity.*;
 public class metricsCalculateTest {
 
     @Autowired
-    private MonthOrgEntropyService test;
+    private MonthForkService_new test;
 
     @Test
     public void testService() throws Exception {
         // 调用服务方法
+    	test.init("cann", "ops-nn", "E:/GithubRep/ops-nn");
         test.generateMonthlyReport();
     }
 }

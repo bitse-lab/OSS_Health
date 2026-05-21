@@ -263,27 +263,43 @@ public class CodeContributorCountService_new{
         }
     }
 	
-	// 获取 PR 提交者（Submitters）
+	// 获取 PR 提交者（Submitters）- 适配GitCode格式
 	private Map<String, List<LocalDate>> getPRSubmitters() throws IOException {
 	    Map<String, List<LocalDate>> prSubmitters = new HashMap<>();
-	    File file = new File(REPO_PATH + "/Github_Api_Message/PRData.json");  // 路径请按需调整
+	    File file = new File(REPO_PATH + "/Github_Api_Message/PRData.json");  // 修改路径为GitCode
+	    if (!file.exists()) {
+	        System.out.println("PRData.json file not found at: " + file.getAbsolutePath());
+	        return prSubmitters;
+	    }
+	    
 	    JsonNode root = objectMapper.readTree(file);
-	    for (JsonNode prNode : root) {
-	        String author = prNode.get("user").get("login").asText();
-	        String dateStr = prNode.get("created_at").asText(); // 假设字段为 created_at
-	        LocalDate date = LocalDate.parse(dateStr.substring(0, 10)); // 转换为 LocalDate
-	        prSubmitters.computeIfAbsent(author, k -> new ArrayList<>()).add(date);
+	    // GitCode的PR数据是数组格式
+	    if (root.isArray()) {
+	        for (JsonNode prNode : root) {
+	            if (prNode.has("user") && prNode.get("user").has("login") && prNode.has("created_at")) {
+	                String author = prNode.get("user").get("login").asText();
+	                String dateStr = prNode.get("created_at").asText();
+	                // GitCode的时间格式包含时区信息，需要截取前10位
+	                LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
+	                prSubmitters.computeIfAbsent(author, k -> new ArrayList<>()).add(date);
+	            }
+	        }
 	    }
 	    return prSubmitters;
 	}
 
-	// 获取代码审核者（Reviewers）
+	// 获取代码审核者（Reviewers）- 适配GitCode格式
 	private Map<String, List<LocalDate>> getReviewers() throws IOException {
 	    Map<String, List<LocalDate>> reviewers = new HashMap<>();
 	    File file = new File(REPO_PATH + "/Github_Api_Message/PRReviewData.json");
+	    if (!file.exists()) {
+	        System.out.println("PRReviewData.json file not found at: " + file.getAbsolutePath());
+	        return reviewers;
+	    }
+	    
 	    JsonNode root = objectMapper.readTree(file);
 
-	    // 遍历每个 PR 编号（如 "155", "2"）
+	    // 遍历每个 PR 编号（如 "89", "88"）
 	    Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
 	    while (fields.hasNext()) {
 	        Map.Entry<String, JsonNode> entry = fields.next();
@@ -291,16 +307,41 @@ public class CodeContributorCountService_new{
 
 	        for (JsonNode reviewNode : reviewList) {
 	            JsonNode userNode = reviewNode.get("user");
-	            if (userNode != null && userNode.has("login") && reviewNode.has("submitted_at")) {
+	            // GitCode的评论数据结构，需要检查是否为审核类型的评论
+	            if (userNode != null && userNode.has("login") && reviewNode.has("created_at")) {
 	                String reviewer = userNode.get("login").asText();
-	                String dateStr = reviewNode.get("submitted_at").asText();
+	                String dateStr = reviewNode.get("created_at").asText();
+	                // GitCode的时间格式包含时区信息，需要截取前10位
 	                LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
-	                reviewers.computeIfAbsent(reviewer, k -> new ArrayList<>()).add(date);
+	                
+	                // 可以根据comment_type或body内容来判断是否为审核评论
+	                // 这里简化处理，将所有评论者都视为潜在的审核者
+	                String body = reviewNode.has("body") ? reviewNode.get("body").asText() : "";
+	                // 可以根据具体需求过滤审核类型的评论，比如包含"/lgtm"、"/approve"等
+	                if (isReviewComment(body)) {
+	                    reviewers.computeIfAbsent(reviewer, k -> new ArrayList<>()).add(date);
+	                }
 	            }
 	        }
 	    }
 
 	    return reviewers;
+	}
+	
+	// 判断是否为审核评论的辅助方法
+	private boolean isReviewComment(String body) {
+	    if (body == null || body.trim().isEmpty()) {
+	        return false;
+	    }
+	    
+	    String lowerBody = body.toLowerCase().trim();
+	    // 根据GitCode平台的审核命令来判断
+	    return lowerBody.startsWith("/lgtm") || 
+	           lowerBody.startsWith("/approve") || 
+	           lowerBody.startsWith("/reject") ||
+	           lowerBody.contains("lgtm") ||
+	           lowerBody.contains("approved") ||
+	           lowerBody.contains("looks good");
 	}
 
     private static boolean isCodeFile(DiffEntry diff) {

@@ -10,7 +10,7 @@ import com.OSS.Health.service.GetGithubApi;
 public class APITest_SpecialFunction {
 	private static final String CLONE_PATH= "E:/GithubRep";
 	private static final String DEAFULT_FOLDER_NAME = "Github_Api_Message";
-	private static final String repoName = "paddlepaddle/paddle-lite";
+	private static final String repoName = "cann/cann-recipes-infer";
 	
 	
 
@@ -33,7 +33,7 @@ public class APITest_SpecialFunction {
         try {
             GetGithubApi test = new GetGithubApi(repoOwnerOnly, repoNameOnly, localPath);
             // 在此行选择需要的方法
-            if(!test.storeIssueData_GraphQL()) {
+            if(!test.storeIssueData()) {
                 System.out.println(repoName + " Test error.");
             } else {
                 System.out.println(repoName + " Test successful.");

@@ -190,14 +190,46 @@ public class CalculateWeight {
         // 存储到数据库
         mysqlWeightMapper.clearMysqlWeightAll();
         for (Map.Entry<String, Double> entry : normalizedWeight.entrySet()) {
+        	String id = entry.getKey();
+            List<Double> rawValues = dataMap.getOrDefault(id, Collections.emptyList());
+//            if(id=="1.3.2"|| id=="1.3.4") {
+//            	System.out.println(rawValues);
+//            }
+
             MysqlWeightModel model = new MysqlWeightModel();
-            model.setId(entry.getKey());
+            model.setId(id);
             model.setWeight(entry.getValue());
+
+            // 计算 A, B, C 分位数
+            model.setA(getPercentile(id, rawValues, 0.05));
+            model.setB(getPercentile(id, rawValues, 0.20));
+            model.setC(getPercentile(id, rawValues, 0.50));
+
             mysqlWeightMapper.insertMysqlWeight(model);
         }
+        
+        ObjectMapper outputMapper = new ObjectMapper();
+        outputMapper.writeValue(new File("C:/Users/114514/Desktop/boxplot_data.json"), normalizedData);
 
         return true;
     }
+    
+    // 获得在percentile位置的数值
+    private double getPercentile(String id, List<Double> data, double percentile) {
+        if (data == null || data.isEmpty()) return 0.0;
+        List<Double> sorted = new ArrayList<>(data);
+        if (POSITIVE_INDICATORS.contains(id)) {
+            // 反向排序，从大到小
+            sorted.sort(Collections.reverseOrder());
+        } else {
+            // 正常排序，从小到大
+            Collections.sort(sorted);
+        }
+        int index = (int) Math.ceil(percentile * sorted.size()) - 1;
+        index = Math.max(0, Math.min(index, sorted.size() - 1));
+        return sorted.get(index);
+    }
+
 
     // JGit 获取第一个和最后一个 commit 的 Date 数组： [firstCommitDate, lastCommitDate]
     private Date[] getFirstAndLastCommitDate(String repoPath) {

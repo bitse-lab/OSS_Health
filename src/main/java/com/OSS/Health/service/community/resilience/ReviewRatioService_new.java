@@ -131,16 +131,16 @@ public class ReviewRatioService_new{
         }
 	}
 	
-	// 获取 PR 以及其是否被 review
+	// 获取 PR 以及其是否被 review（适配GitCode平台）
 	private List<PRData> getPRData() throws IOException {
 	    List<PRData> prDataList = new ArrayList<>();
 	    ObjectMapper mapper = new ObjectMapper();
 
-	    // 读取 PR 基本信息（创建时间）
+	    // 读取 PR 基本信息（创建时间）- 适配GitCode格式
 	    File prFile = new File(REPO_PATH + "/Github_Api_Message/PRData.json");
 	    JsonNode prArray = mapper.readTree(prFile);
 
-	    // 读取 PR 的 review 数量信息（key 为 PR 编号，value 为 review 列表）
+	    // 读取 PR 的 review 数量信息（key 为 PR 编号，value 为 review 列表）- 适配GitCode格式
 	    File reviewFile = new File(REPO_PATH + "/Github_Api_Message/PRReviewData.json");
 	    JsonNode reviewMapNode = mapper.readTree(reviewFile);
 
@@ -149,15 +149,19 @@ public class ReviewRatioService_new{
 	    Iterator<Map.Entry<String, JsonNode>> fields = reviewMapNode.fields();
 	    while (fields.hasNext()) {
 	        Map.Entry<String, JsonNode> entry = fields.next();
-	        String prNumber = entry.getKey();  // "155", "2", ...
+	        String prNumber = entry.getKey();  // "89", "88", ...
 	        int reviewNum = entry.getValue().size(); // 数组长度就是 review 数量
 	        reviewCountMap.put(prNumber, reviewNum);
 	    }
 
-	    // 构建 PRData 列表
+	    // 构建 PRData 列表 - 适配GitCode的JSON结构
 	    for (JsonNode prNode : prArray) {
-	        String number = prNode.get("number").asText(); // 与上面 key 对应
-	        LocalDate commitTime = LocalDate.parse(prNode.get("created_at").asText().substring(0, 10));
+	        // GitCode使用"number"字段，但需要转换为字符串
+	        String number = String.valueOf(prNode.get("number").asInt()); 
+	        // GitCode使用"created_at"字段，格式为"2025-10-20T21:10:29+08:00"
+	        String createdAtStr = prNode.get("created_at").asText();
+	        // 解析GitCode的时间格式，提取日期部分
+	        LocalDate commitTime = LocalDate.parse(createdAtStr.substring(0, 10));
 	        int reviewNum = reviewCountMap.getOrDefault(number, 0);
 	        prDataList.add(new PRData(number, commitTime, reviewNum));
 	    }

@@ -103,22 +103,27 @@ public class MonthIssueService_new{
 	    JsonNode rootNode = objectMapper.readTree(jsonFile);
 	    
 	    for (JsonNode issueNode : rootNode) {
-	    	// 提取 created_at 字段
+	    	// 提取 created_at 字段 (GitCode使用created_at字段)
 	    	JsonNode createdAtNode = issueNode.get("created_at");
-	    	if (createdAtNode == null) {
-	    	    createdAtNode = issueNode.get("createdAt");
+	    	if (createdAtNode == null || createdAtNode.isNull()) {
+	    		System.out.println("Warning: Issue missing created_at field, skipping...");
+	    		continue;
 	    	}
-	    	if (createdAtNode == null || createdAtNode.isNull()) continue;
 	    	String createdAtStr = createdAtNode.asText();
 
-	        // 解析为 LocalDateTime
-	        OffsetDateTime createdAt = OffsetDateTime.parse(createdAtStr);
+	        try {
+	            // 解析为 OffsetDateTime (GitCode的时间格式: "2025-10-21T14:28:35+08:00")
+	            OffsetDateTime createdAt = OffsetDateTime.parse(createdAtStr);
 
-	        // 提取 YearMonth
-	        YearMonth yearMonth = YearMonth.from(createdAt);
+	            // 提取 YearMonth
+	            YearMonth yearMonth = YearMonth.from(createdAt);
 
-	        // 累加每月 Issue 数量
-	        monthIssueCount.put(yearMonth, monthIssueCount.getOrDefault(yearMonth, 0) + 1);
+	            // 累加每月 Issue 数量
+	            monthIssueCount.put(yearMonth, monthIssueCount.getOrDefault(yearMonth, 0) + 1);
+	        } catch (Exception e) {
+	            System.out.println("Warning: Failed to parse date: " + createdAtStr + ", skipping this issue");
+	            continue;
+	        }
 	    }	
 	
 	    return monthIssueCount;

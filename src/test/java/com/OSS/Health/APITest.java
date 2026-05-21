@@ -12,8 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 public class APITest {
-	private static final String SAMPLE_REPO_JSON= "D:/Plateform/Git/repositories/OSS_Health/resources/sampleRep_deep-learning_1_new.json";
-	private static final String CLONE_PATH= "E:/GithubRep";
+	private static final String SAMPLE_REPO_JSON= "D:/Plateform/Git/repositories/OSS_Health_gitcode/resources/openharmony_repos.json";
+	private static final String CLONE_PATH= "E:/GithubRep2";
 	private static final String DEAFULT_FOLDER_NAME = "Github_Api_Message";
 
     @Test

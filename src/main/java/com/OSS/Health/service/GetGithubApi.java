@@ -17,14 +17,14 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class GetGithubApi{
-	private static final String GITHUB_API_URL = "https://api.github.com";
+	private static final String GITHUB_API_URL = "https://api.gitcode.com/api/v5";
 	private static final String GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
 //    private static final String REPO_OWNER = "mozilla"; // 请替换为仓库的拥有者
 //    private static final String REPO_NAME = "DeepSpeech";   // 请替换为仓库名称
 //    private static final String REPO_PATH = "E:/GithubRep/DeepSpeech"; // 请替换为git仓库存储位置
     private static final String DEAFULT_FOLDER_NAME = "Github_Api_Message"; //在对应git仓库位置下存储保存的api信息
-    private static final String GITHUB_TOKEN = "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";  // 使用你自己的GitHub Personal Access Token
-    private static final String GITHUB_TOKEN1 = "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"; //备用token
+    private static final String GITHUB_TOKEN = "tT1stzb1yuYsq8gtJtcFJAdX";  // 使用你自己的GitHub Personal Access Token
+    private static final String GITHUB_TOKEN1 = "TmGjG4jTn1sYtGwH4PGLKNY2"; //备用token
     
     private final String REPO_OWNER;
     private final String REPO_NAME;
@@ -84,11 +84,11 @@ public class GetGithubApi{
                 return false;
             }
         } else {
-        	return true;
+        	return false;
         }
     }
     
-    private boolean storePRData() {
+    public boolean storePRData() {
     	System.out.println("Start storePRData.");
     	String fileName = REPO_PATH + "/" + DEAFULT_FOLDER_NAME + "/PRData.json";
         File file = new File(fileName);
@@ -98,7 +98,7 @@ public class GetGithubApi{
     	int page = 1;
 	    int perPage = 100; // 每页100个评论
 	    // 获取所有 PR
-	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/pulls?state=all&page=%d&per_page=%d";
+	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/pulls?access_token=" + IN_USE_TOKEN + "&state=all&page=%d&per_page=%d";
 	    // 创建一个 ArrayNode 来收集所有 PR 数据
         ArrayNode allPRs = objectMapper.createArrayNode();
 	    while (true) {
@@ -162,7 +162,7 @@ public class GetGithubApi{
         System.out.println("Saved all data to: " + fileName);
     }
     
-    private boolean storePRReviewData() {
+    public boolean storePRReviewData() {
     	System.out.println("Start storePRReviewData.");
     	
     	String fileName = REPO_PATH + "/" + DEAFULT_FOLDER_NAME + "/PRReviewData.json";
@@ -188,7 +188,7 @@ public class GetGithubApi{
         int page = 1;
 	    int perPage = 100; // 每页100个评论
 	    // 获取所有 PRReview
-	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/pulls/%d/reviews?page=%d&per_page=%d";
+	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/pulls/%d/comments?access_token=" + IN_USE_TOKEN + "&page=%d&per_page=%d";
 	    // 创建一个 ArrayNode 来收集所有 PRReview 数据
 	    ObjectNode allPRReviews = objectMapper.createObjectNode();
 	    // 每读取 200 个, 显示一次进度
@@ -249,7 +249,7 @@ public class GetGithubApi{
     	return true;
     }   
     
-    private boolean storeStarData() {
+    public boolean storeStarData() {
         System.out.println("Start storeStarData.");
         String fileName = REPO_PATH + "/" + DEAFULT_FOLDER_NAME + "/StarData.json";
         File file = new File(fileName);
@@ -257,51 +257,57 @@ public class GetGithubApi{
             return true;
         }
 
-        // GraphQL 查询模板
-        String queryTemplate = "{ \"query\": \"query { repository(owner: \\\"%s\\\", name: \\\"%s\\\") { stargazers(first: 100, after: %s) { edges { starredAt node { login } } pageInfo { endCursor hasNextPage } } } }\" }";
-
-        String endCursor = "null"; // 初始时无游标
-        boolean hasNextPage = true;
+        int page = 1;
+        int perPage = 100; // 每页100个用户，GitCode API最大支持100
         
+        // GitCode API URL模板
+        String urlTemplate = "https://api.gitcode.com/api/v5/repos/" + REPO_OWNER + "/" + REPO_NAME + "/stargazers?access_token=" + IN_USE_TOKEN + "&page=%d&per_page=%d";
+        
+        // 创建一个 ArrayNode 来收集所有 Star 数据
         ArrayNode allStars = objectMapper.createArrayNode();
 
-        while (hasNextPage) {
-            // 构造 GraphQL 查询
-        	String query = String.format(queryTemplate, REPO_OWNER, REPO_NAME, endCursor.equals("null") ? "null" : ("\\\"" + endCursor + "\\\""));
-
+        while (true) {
+            // 构造当前页的请求URL
+            String url = String.format(urlTemplate, page, perPage);
+            
             // 发送请求
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + IN_USE_TOKEN);
-            headers.set("Content-Type", "application/json");
-
-            HttpEntity<String> entity = new HttpEntity<>(query, headers);
-            // ResponseEntity<String> response = restTemplate.exchange(GITHUB_GRAPHQL_URL, HttpMethod.POST, entity, String.class);
             ResponseEntity<String> response = null;
             try {
-	        	response = fetchResponse_GraphQL(restTemplate, GITHUB_GRAPHQL_URL, entity);
-	        } catch (InterruptedException e) {
-				System.out.println(e.getMessage());
-			}
+                response = fetchResponse(restTemplate, url);
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+                return false;
+            }
             
-            JsonNode jsonResponse;
+            if (response == null) {
+                return false;
+            }
+
+            JsonNode starArray = null;
             try {
-                jsonResponse = objectMapper.readTree(response.getBody());
+                starArray = objectMapper.readTree(response.getBody());
             } catch (IOException e) {
                 System.err.println("Error parsing the JSON response: " + e.getMessage());
                 return false;
             }
 
-            // 解析数据
-            JsonNode edges = jsonResponse.at("/data/repository/stargazers/edges");
-            if (edges.isArray()) {
-                for (JsonNode edge : edges) {
-                    allStars.add(edge);
-                }
+            // 如果当前页没有数据，跳出循环
+            if (starArray.isEmpty()) {
+                break;
             }
 
-            // 获取分页信息
-            hasNextPage = jsonResponse.at("/data/repository/stargazers/pageInfo/hasNextPage").asBoolean();
-            endCursor = jsonResponse.at("/data/repository/stargazers/pageInfo/endCursor").asText();
+            // 将Star用户信息添加到总数组中
+            for (JsonNode star : starArray) {
+                allStars.add(star);
+            }
+            
+            // 如果返回的数据少于每页数量，说明已经是最后一页
+            if (starArray.size() < perPage) {
+                break;
+            }
+            
+            // 增加页码，继续请求下一页
+            page++;
         }
 
         // 保存 JSON 文件
@@ -312,11 +318,13 @@ public class GetGithubApi{
             return false;
         }
 
+        System.out.println("starPages: " + (page - 1));
         return true;
     }
 
+
     
-    private boolean storeForkData() {
+    public boolean storeForkData() {
         System.out.println("Start storeForkData.");
         String fileName = REPO_PATH + "/" + DEAFULT_FOLDER_NAME + "/ForkData.json";
         File file = new File(fileName);
@@ -324,51 +332,51 @@ public class GetGithubApi{
             return true;
         }
 
-        // GraphQL 查询模板
-        String queryTemplate = "{ \"query\": \"query { repository(owner: \\\"%s\\\", name: \\\"%s\\\") { forks(first: 100, after: %s) { edges { node { nameWithOwner createdAt } } pageInfo { endCursor hasNextPage } } } }\" }";
-
-        String endCursor = "null"; // 初始时无游标
-        boolean hasNextPage = true;
-
+        int page = 1;
+        int perPage = 100; // 每页100个fork，GitCode API最大支持100
+        
+        // GitCode API URL模板
+        String urlTemplate = "https://api.gitcode.com/api/v5/repos/" + REPO_OWNER + "/" + REPO_NAME + "/forks?access_token=" + IN_USE_TOKEN + "&page=%d&per_page=%d";
+        
+        // 创建一个 ArrayNode 来收集所有 Fork 数据
         ArrayNode allForks = objectMapper.createArrayNode();
-
-        while (hasNextPage) {
-            // 构造 GraphQL 查询
-            String query = String.format(queryTemplate, REPO_OWNER, REPO_NAME, endCursor.equals("null") ? "null" : ("\\\"" + endCursor + "\\\""));
-
-            // 发送请求
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + IN_USE_TOKEN);
-            headers.set("Content-Type", "application/json");
-
-            HttpEntity<String> entity = new HttpEntity<>(query, headers);
-            // ResponseEntity<String> response = restTemplate.exchange(GITHUB_GRAPHQL_URL, HttpMethod.POST, entity, String.class);
+        
+        while (true) {
+            // 请求当前页的Fork数据
+            String url = String.format(urlTemplate, page, perPage);
+            
             ResponseEntity<String> response = null;
             try {
-	        	response = fetchResponse_GraphQL(restTemplate, GITHUB_GRAPHQL_URL, entity);
-	        } catch (InterruptedException e) {
-				System.out.println(e.getMessage());
-			}
+                response = fetchResponse(restTemplate, url);
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+                return false;
+            }
+            
+            if (response == null) {
+                return false;
+            }
 
-            JsonNode jsonResponse;
+            JsonNode forkArray = null;
             try {
-                jsonResponse = objectMapper.readTree(response.getBody());
+                forkArray = objectMapper.readTree(response.getBody());
             } catch (IOException e) {
                 System.err.println("Error parsing the JSON response: " + e.getMessage());
                 return false;
             }
 
-            // 解析 Fork 数据
-            JsonNode edges = jsonResponse.at("/data/repository/forks/edges");
-            if (edges.isArray()) {
-                for (JsonNode edge : edges) {
-                    allForks.add(edge);
-                }
-            	}
+            // 如果当前页没有数据，跳出循环
+            if (forkArray.isEmpty()) {
+                break;
+            }
 
-            // 获取分页信息
-            hasNextPage = jsonResponse.at("/data/repository/forks/pageInfo/hasNextPage").asBoolean();
-            endCursor = jsonResponse.at("/data/repository/forks/pageInfo/endCursor").asText();
+            // 将Fork信息添加到总数组中
+            for (JsonNode fork : forkArray) {
+                allForks.add(fork);
+            }
+            
+            // 增加页码，继续请求下一页Fork
+            page++;
         }
 
         // 保存 JSON 文件
@@ -379,10 +387,12 @@ public class GetGithubApi{
             return false;
         }
 
+        System.out.println("forkPages: " + (page - 1));
         return true;
     }
+
     
-    private boolean storeIssueData() {
+    public boolean storeIssueData() {
     	System.out.println("Start storeIssueData.");
     	String fileName = REPO_PATH + "/" + DEAFULT_FOLDER_NAME + "/IssueData.json";
         File file = new File(fileName);
@@ -392,7 +402,7 @@ public class GetGithubApi{
     	int page = 1;
 	    int perPage = 100; // 每页100个
 	    // 获取所有 Issue
-	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/issues?state=all&per_page=" + perPage + "&page=%d";
+	    String urlTemplate = GITHUB_API_URL + "/repos/" + REPO_OWNER + "/" + REPO_NAME + "/issues?access_token=" + IN_USE_TOKEN + "&state=all&per_page=" + perPage + "&page=%d";
 	    // 创建一个 ArrayNode 来收集所有 Issue 数据
         ArrayNode allIssues = objectMapper.createArrayNode();
         int getedApiNum= 0;
@@ -408,6 +418,7 @@ public class GetGithubApi{
     				System.out.println(e.getMessage());
     			}
                 // 每读取 200 个, 显示一次进度
+                if(response== null) return false;
                 ++getedApiNum;
                 if(getedApiNum% 200 == 0) {
                 	System.out.println("Get api num: "+ getedApiNum);

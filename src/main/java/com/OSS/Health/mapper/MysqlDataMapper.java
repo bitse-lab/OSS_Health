@@ -19,10 +19,10 @@ public interface MysqlDataMapper {
     void insertMysqlData(MysqlDataModel entity);
     
     //读取数据
-    @Select("SELECT time, number, s1 FROM vuejs_core WHERE id = #{id}")
+    @Select("SELECT time, number, s1 FROM openharmony_kernel_liteos WHERE id = #{id}")
     List<Map<String, Object>> getMysqlDataModel(String id);
     
-    @Select("SELECT time, number FROM vuejs_core WHERE id = #{id}")
+    @Select("SELECT time, number FROM openharmony_kernel_liteos WHERE id = #{id}")
     List<Map<String, Object>> getMysqlDataModelNoS1(String id);
     
     //清空 vuejs_core
