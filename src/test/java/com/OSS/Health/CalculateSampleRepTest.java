@@ -14,8 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 public class CalculateSampleRepTest {
-	private static final String SAMPLE_REPO_JSON= "D:/Plateform/Git/repositories/OSS_Health/resources/sampleRep_deep-learning_1_new.json";
-	private static final String CLONE_PATH= "E:/GithubRep";
+	private static final String SAMPLE_REPO_JSON= "C:/Users/114514/Desktop/test/repo_list.json";
+	private static final String CLONE_PATH= "F:/github_repos";
 	
 	@Autowired
 	private ApplicationContext context;

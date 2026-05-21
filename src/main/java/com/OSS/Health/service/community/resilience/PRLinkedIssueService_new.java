@@ -134,7 +134,8 @@ public class PRLinkedIssueService_new{
 	
 	private List<PRData> getPRData() throws IOException {
 		List<PRData> prDataList = new ArrayList<PRData>();
-		String filePath= REPO_PATH+ "/Github_Api_Message/PRData.json";
+//		String filePath= REPO_PATH+ "/Github_Api_Message/PRData.json";
+		String filePath= "F:/github_api_repos/"+ REPO_NAME+ "/PRData.json";
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		

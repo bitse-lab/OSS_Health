@@ -1,0 +1,17 @@
+[
+  "code_changes",
+  "issue_count",
+  "commit_count",
+  "pr_count",
+  "org_commits",
+  "org_entropy",
+  "volunteer_entropy",
+  "volunteer_commits",
+  "review_ratio",
+  "pr_merged_ratio",
+  "pr_linked_ratio",
+  "contributor_count",
+  "star_count",
+  "fork_count",
+  "long_term_contributors_active"
+]

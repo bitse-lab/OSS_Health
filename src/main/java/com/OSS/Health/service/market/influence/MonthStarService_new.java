@@ -109,7 +109,8 @@ public class MonthStarService_new{
 	
 	private List<LocalDate> getStarData() throws IOException {
 		List<LocalDate> starDataList = new ArrayList<LocalDate>();
-		String filePath= REPO_PATH+ "/Github_Api_Message/StarData.json";
+//		String filePath= REPO_PATH+ "/Github_Api_Message/StarData.json";
+		String filePath= "F:/github_api_repos/"+ REPO_NAME+ "/StarData.json";
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		

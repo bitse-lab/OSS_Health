@@ -28,6 +28,7 @@ MAX_ROUND = 3
 class Reporter:
     """负责根据输入生成报告"""
     systemPrompt = """
+以中文格式给出报告结果
 Role:
 You are an expert in analyzing the health of open-source software projects.
 
@@ -174,7 +175,7 @@ def main():
     reporter = Reporter(llm)
     reviewer = Reviewer(llm, max_rounds=MAX_ROUND)
 
-    with open("paddle-lite.txt", "r", encoding="utf-8") as f:
+    with open("kernel_liteos.txt", "r", encoding="utf-8") as f:
         user_input = f.read().strip()
 
     report = reporter.generate_report(user_input)

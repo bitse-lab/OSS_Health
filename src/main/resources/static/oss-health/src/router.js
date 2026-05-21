@@ -6,6 +6,8 @@ import OverViewOSS from './pages/HealthComponents/OverViewOSS.vue';
 import SoftwareOSS from './pages/HealthComponents/SoftwareOSS.vue';
 import CommunityOSS from './pages/HealthComponents/CommunityOSS.vue';
 import MarketOSS from './pages/HealthComponents/MarketOSS.vue';
+import HealthReport from './pages/HealthComponents/HealthReport.vue';
+import SustainPredict from './pages/HealthComponents/SustainPredict.vue';
 import HomePage from './pages/HomePage.vue';
 import DocsPage from './pages/DocsPage.vue';
 import AboutPage from './pages/AboutPage.vue';
@@ -47,6 +49,17 @@ const routes = [
         name: "Market",
         component: MarketOSS,
       },
+      {
+        path: '/healthreport',
+        name: 'HealthReport',
+        component: HealthReport,
+      },
+      {
+        path: '/sustainpredict',
+        name: 'SustainPredict',
+        component: SustainPredict,
+      }
+      
     ],
   },
   {

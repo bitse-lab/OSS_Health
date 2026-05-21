@@ -109,7 +109,8 @@ public class MonthForkService_new{
 	
 	private List<LocalDate> getForkData() throws IOException {
 		List<LocalDate> forkDataList = new ArrayList<LocalDate>();
-		String filePath= REPO_PATH+ "/Github_Api_Message/ForkData.json";
+//		String filePath= REPO_PATH+ "/Github_Api_Message/ForkData.json";
+		String filePath= "F:/github_api_repos/"+ REPO_NAME+ "/ForkData.json";
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		
